@@ -1,15 +1,15 @@
 import dayjs from 'dayjs';
 
 export const createTripEvent = (route) => {
-  const {date, type, city, allPrice, favorite} = route;
+  const { date, type, city, allPrice, favorite, time } = route;
 
-  const dataDayMonth = dayjs(date).format('D MMM');
+  const dataDayMonth = dayjs(date.dataBeginEvent).format('D MMM');
 
   let favoriteClass = '';
   const title = type.title;
   const img = type.img;
 
-  if(favorite === true) {
+  if (favorite === true) {
     favoriteClass = 'event__favorite-btn--active';
   }
 
@@ -22,11 +22,11 @@ export const createTripEvent = (route) => {
     <h3 class="event__title">${title} ${city}</h3>
     <div class="event__schedule">
       <p class="event__time">
-        <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+        <time class="event__start-time" datetime="2019-03-18T10:30">${time.startTime}</time>
         &mdash;
-        <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+        <time class="event__end-time" datetime="2019-03-18T11:00">${time.endTime}</time>
       </p>
-      <p class="event__duration">30M</p>
+      <p class="event__duration">${time.duration}</p>
     </div>
     <p class="event__price">
       &euro;&nbsp;<span class="event__price-value">${allPrice}</span>
