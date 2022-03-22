@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../render.js';
 
-export const createTripEditPoint = (route) => {
+const createTripEditPoint = (route) => {
   const {
     date,
     type,
@@ -124,3 +125,29 @@ export const createTripEditPoint = (route) => {
   </form>
 </li>`;
 };
+
+
+export default class EditPoint {
+  #element = null;
+  #editPoint = null;
+
+  constructor(editPoint) {
+    this.#editPoint = editPoint;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripEditPoint(this.#editPoint);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
