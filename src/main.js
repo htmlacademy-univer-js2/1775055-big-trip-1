@@ -1,13 +1,14 @@
-import { createTripMenu } from './view/menu-view.js';
-import { createTripFilter } from './view/filter-view.js';
-import { createTripListEvents } from './view/list-event-view.js';
-import { createTripEvent } from './view/item-event-view.js';
-import { createTripEventOffer, createOfferForEditAndNewPoint } from './view/event-offer-view.js';
-import { createTripSort } from './view/sort-view.js';
-import { createTripEditPoint } from './view/edit-point-view.js';
+import MenuView from './view/menu-view.js';
+import FilterView from './view/filter-view.js';
+import ListEventView from './view/list-event-view.js';
+import EventView from './view/item-event-view.js';
+import EventOffer from './view/event-offer-view.js';
+import OfferForEditAndNewPoint from './view/offer-edit-and-new-point.js';
+import SortView from './view/sort-view.js';
+import EditPoint from './view/edit-point-view.js';
 import { generateRoute } from './mock/point.js';
-import { createTripPhoto } from './view/add-photo-tape-view.js';
-import { renderTemplate, RenderPosition } from './render.js';
+import TripPhoto from './view/add-photo-tape-view.js';
+import { RenderPosition, render } from './render.js';
 
 const routeCount = 15;
 
@@ -16,41 +17,63 @@ const routes = Array.from({ length: routeCount }, generateRoute);
 const siteHeader = document.querySelector('.page-header');
 const siteNavigationElement = siteHeader.querySelector('.trip-controls__navigation');
 
-renderTemplate(siteNavigationElement, createTripMenu(), RenderPosition.BEFOREEND);
+render(siteNavigationElement, new MenuView().element, RenderPosition.BEFOREEND);
 
 const siteFilterElement = siteHeader.querySelector('.trip-controls__filters');
 
-renderTemplate(siteFilterElement, createTripFilter(), RenderPosition.BEFOREEND);
+render(siteFilterElement, new FilterView().element, RenderPosition.BEFOREEND);
 
 const siteMain = document.querySelector('.page-main');
 const siteMainElement = siteMain.querySelector('.page-body__container');
 
-renderTemplate(siteMainElement, createTripSort(), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortView().element, RenderPosition.BEFOREEND);
 
-renderTemplate(siteMainElement, createTripListEvents(), RenderPosition.BEFOREEND);
+render(siteMainElement, new ListEventView().element, RenderPosition.BEFOREEND);
 
 const siteList = document.querySelector('.trip-events__list');
 
+const renderEvent = (eventListElement, event) => {
+  const eventComponent = new EventView(event);
+  const eventEditComponent = new EditPoint(event);
+
+  const replaceEventToEditPoint = () => {
+    eventListElement.replaceChild(eventEditComponent.element, eventComponent.element);
+  };
+
+  const replaceEditPointToEvent = () => {
+    eventListElement.replaceChild(eventComponent.element, eventEditComponent.element);
+  };
+
+  
+  eventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceEventToEditPoint();
+    const availableOffers = eventListElement.querySelector('.event__available-offers');
+    for (let i = 0; i < event.offers.length; i++) {
+      render(availableOffers, new OfferForEditAndNewPoint(event.offers[i]).element, RenderPosition.BEFOREEND);
+    }
+  });
+
+  eventEditComponent.element.querySelector('.event').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const availableOffers = eventListElement.querySelector('.event__available-offers');
+    const offersElement = availableOffers.querySelectorAll('.event__offer-selector');
+    for (let i = 0; i < event.offers.length; i++) {
+      offersElement[i].remove();
+    }
+    replaceEditPointToEvent();
+  });
+
+  render(eventListElement, eventComponent.element, RenderPosition.BEFOREEND);
+};
+
 for (let i = 0; i < routeCount; i++) {
-  renderTemplate(siteList, createTripEvent(routes[i]), RenderPosition.BEFOREEND);
+  renderEvent(siteList, routes[i]);
 }
 
 const selectedOffers = document.querySelectorAll('.event__selected-offers');
 
 for (let i = 0; i < routeCount; i++) {
   for (let j = 0; j < routes[i].offers.length; j++) {
-    renderTemplate(selectedOffers[i], createTripEventOffer(routes[i].offers[j]), RenderPosition.BEFOREEND);
+    render(selectedOffers[i], new EventOffer(routes[i].offers[j]).element, RenderPosition.BEFOREEND);
   }
-}
-
-renderTemplate(siteList, createTripEditPoint(routes[0]), RenderPosition.AFTERBEGIN);
-const availableOffers = document.querySelector('.event__available-offers');
-for (let i = 0; i < routes[0].offers.length; i++) {
-  renderTemplate(availableOffers, createOfferForEditAndNewPoint(routes[0].offers[i]), RenderPosition.BEFOREEND);
-}
-
-const photosTape = document.querySelector('.event__photos-tape');
-
-for (let i = 0; i < routes[0].photos.length; i++) {
-  renderTemplate(photosTape, createTripPhoto(routes[0].photos[i]), RenderPosition.AFTERBEGIN);
 }

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../render.js';
 
-export const createTripEvent = (route) => {
+const createTripEvent = (route) => {
   const { date, type, city, allPrice, favorite, time } = route;
 
   const dataDayMonth = dayjs(date.dataBeginEvent).format('D MMM');
@@ -47,3 +48,28 @@ export const createTripEvent = (route) => {
   </div>
 </li>`;
 };
+
+export default class EventView {
+  #element = null;
+  #events = null;
+
+  constructor(event) {
+    this.#events = event;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripEvent(this.#events);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

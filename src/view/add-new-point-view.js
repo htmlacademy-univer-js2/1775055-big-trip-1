@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../render.js';
 
-export const createTripAddNewPoint = (route = {}) => {
+const createTripAddNewPoint = (route = {}) => {
   const {
     date = null,
     type = null,
@@ -131,3 +132,28 @@ export const createTripAddNewPoint = (route = {}) => {
   </form>
 </li>`;
 };
+
+export default class AddNewPoint {
+  #element = null;
+  #addNewPoint = null;
+
+  constructor(addNewPoint) {
+    this.#addNewPoint = addNewPoint;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createTripEditPoint(this.#addNewPoint);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
