@@ -7,10 +7,11 @@ import OfferForEditAndNewPoint from './view/offer-edit-and-new-point.js';
 import SortView from './view/sort-view.js';
 import EditPoint from './view/edit-point-view.js';
 import { generateRoute } from './mock/point.js';
+import EventEmpty from './view/event-empty.js';
 import TripPhoto from './view/add-photo-tape-view.js';
 import { RenderPosition, render } from './render.js';
 
-const routeCount = 15;
+const routeCount = 5;
 
 const routes = Array.from({ length: routeCount }, generateRoute);
 
@@ -26,9 +27,12 @@ render(siteFilterElement, new FilterView().element, RenderPosition.BEFOREEND);
 const siteMain = document.querySelector('.page-main');
 const siteMainElement = siteMain.querySelector('.page-body__container');
 
-render(siteMainElement, new SortView().element, RenderPosition.BEFOREEND);
+const sortView = new SortView();
 
-render(siteMainElement, new ListEventView().element, RenderPosition.BEFOREEND);
+render(siteMainElement, sortView.element, RenderPosition.BEFOREEND);
+
+const listEventComponent = new ListEventView();
+render(siteMainElement, listEventComponent.element, RenderPosition.BEFOREEND);
 
 const siteList = document.querySelector('.trip-events__list');
 
@@ -44,6 +48,13 @@ const renderEvent = (eventListElement, event) => {
     eventListElement.replaceChild(eventComponent.element, eventEditComponent.element);
   };
 
+  const removeOfferElements = () => {
+    const availableOffers = eventListElement.querySelector('.event__available-offers');
+    const offersElement = availableOffers.querySelectorAll('.event__offer-selector');
+    for (let i = 0; i < event.offers.length; i++) {
+      offersElement[i].remove();
+    }
+  };
   
   eventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
     replaceEventToEditPoint();
@@ -51,16 +62,29 @@ const renderEvent = (eventListElement, event) => {
     for (let i = 0; i < event.offers.length; i++) {
       render(availableOffers, new OfferForEditAndNewPoint(event.offers[i]).element, RenderPosition.BEFOREEND);
     }
+    document.addEventListener('keydown', onEscKeyDown);
   });
+
+  eventEditComponent.element.querySelector('.event--edit').querySelector('.event__rollup-btn').addEventListener('click', () => {
+    removeOfferElements();
+    replaceEditPointToEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      removeOfferElements();
+      replaceEditPointToEvent();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
 
   eventEditComponent.element.querySelector('.event').addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const availableOffers = eventListElement.querySelector('.event__available-offers');
-    const offersElement = availableOffers.querySelectorAll('.event__offer-selector');
-    for (let i = 0; i < event.offers.length; i++) {
-      offersElement[i].remove();
-    }
+    removeOfferElements();
     replaceEditPointToEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
 
   render(eventListElement, eventComponent.element, RenderPosition.BEFOREEND);
@@ -68,6 +92,15 @@ const renderEvent = (eventListElement, event) => {
 
 for (let i = 0; i < routeCount; i++) {
   renderEvent(siteList, routes[i]);
+}
+
+const tripEventsSection = document.querySelector('.trip-events');
+const eventEmptyComponent = new EventEmpty();
+
+if(routes.length === 0){
+  render(tripEventsSection, eventEmptyComponent.element, RenderPosition.BEFOREEND);
+  siteList.remove();
+  sortView.element.remove();
 }
 
 const selectedOffers = document.querySelectorAll('.event__selected-offers');
