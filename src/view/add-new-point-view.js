@@ -150,7 +150,7 @@ export default class AddNewPoint {
   }
 
   get template() {
-    return createTripEditPoint(this.#addNewPoint);
+    return createTripAddNewPoint(this.#addNewPoint);
   }
 
   removeElement() {
