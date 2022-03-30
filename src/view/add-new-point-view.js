@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createTripAddNewPoint = (route = {}) => {
   const {
@@ -133,27 +133,15 @@ const createTripAddNewPoint = (route = {}) => {
 </li>`;
 };
 
-export default class AddNewPoint {
-  #element = null;
+export default class AddNewPoint extends AbstractView {
   #addNewPoint = null;
 
   constructor(addNewPoint) {
+    super();
     this.#addNewPoint = addNewPoint;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createTripAddNewPoint(this.#addNewPoint);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

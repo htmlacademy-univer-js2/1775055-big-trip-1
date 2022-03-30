@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createTripEventOffer = (offer) => {
   const { title, price } = offer;
@@ -9,27 +9,15 @@ const createTripEventOffer = (offer) => {
 </li>`;
 };
 
-export default class EventOffer {
-  #element = null;
+export default class EventOffer extends AbstractView {
   #eventOffer = null;
 
   constructor(eventOffer) {
+    super();
     this.#eventOffer = eventOffer;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createTripEventOffer(this.#eventOffer);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
