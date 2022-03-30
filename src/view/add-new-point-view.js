@@ -6,12 +6,7 @@ const createTripAddNewPoint = (route = {}) => {
     date = null,
     type = null,
     city = null,
-    time = null,
-    offers = null,
     description = null,
-    allPrice = null,
-    favorite = null,
-    photo = null
   } = route;
 
   const dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');

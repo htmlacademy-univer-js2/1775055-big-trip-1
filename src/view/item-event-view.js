@@ -70,4 +70,4 @@ export default class EventView extends AbstractView {
     evt.preventDefault();
     this._callback.click();
   }
-};
+}

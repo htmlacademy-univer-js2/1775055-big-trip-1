@@ -10,4 +10,4 @@ export default class ListEventView extends AbstractView {
   get template() {
     return createTripListEvents();
   }
-};
+}

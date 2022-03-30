@@ -6,13 +6,13 @@ export default class AbstractView {
 
   constructor() {
     if (new.target === AbstractView) {
-        throw new Error('Can\'t instantiate AbstractView, only concrete one.');
+      throw new Error('Can\'t instantiate AbstractView, only concrete one.');
     }
   }
 
   get element() {
     if (!this.#element) {
-        this.#element = createElement(this.template);
+      this.#element = createElement(this.template);
     }
 
     return this.#element;
