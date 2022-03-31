@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createOfferForEditAndNewPoint = (offer) => {
   const { title, price } = offer;
@@ -12,27 +12,15 @@ const createOfferForEditAndNewPoint = (offer) => {
 </div>`;
 };
 
-export default class OfferForEditAndNewPoint {
-  #element = null;
+export default class OfferForEditAndNewPoint extends AbstractView {
   #editAndNewPoint = null;
 
   constructor(editAndNewPoint) {
+    super();
     this.#editAndNewPoint = editAndNewPoint;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createOfferForEditAndNewPoint(this.#editAndNewPoint);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

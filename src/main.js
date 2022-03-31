@@ -8,7 +8,6 @@ import SortView from './view/sort-view.js';
 import EditPoint from './view/edit-point-view.js';
 import { generateRoute } from './mock/point.js';
 import EventEmpty from './view/event-empty.js';
-import TripPhoto from './view/add-photo-tape-view.js';
 import { RenderPosition, render } from './render.js';
 
 const routeCount = 5;
@@ -55,21 +54,6 @@ const renderEvent = (eventListElement, event) => {
       offersElement[i].remove();
     }
   };
-  
-  eventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceEventToEditPoint();
-    const availableOffers = eventListElement.querySelector('.event__available-offers');
-    for (let i = 0; i < event.offers.length; i++) {
-      render(availableOffers, new OfferForEditAndNewPoint(event.offers[i]).element, RenderPosition.BEFOREEND);
-    }
-    document.addEventListener('keydown', onEscKeyDown);
-  });
-
-  eventEditComponent.element.querySelector('.event--edit').querySelector('.event__rollup-btn').addEventListener('click', () => {
-    removeOfferElements();
-    replaceEditPointToEvent();
-    document.removeEventListener('keydown', onEscKeyDown);
-  });
 
   const onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -80,14 +64,28 @@ const renderEvent = (eventListElement, event) => {
     }
   };
 
-  eventEditComponent.element.querySelector('.event').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  eventComponent.setClickRollupHandler(() => {
+    replaceEventToEditPoint();
+    const availableOffers = eventListElement.querySelector('.event__available-offers');
+    for (let i = 0; i < event.offers.length; i++) {
+      render(availableOffers, new OfferForEditAndNewPoint(event.offers[i]), RenderPosition.BEFOREEND);
+    }
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  eventEditComponent.setClickRollupHandler(() => {
     removeOfferElements();
     replaceEditPointToEvent();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(eventListElement, eventComponent.element, RenderPosition.BEFOREEND);
+  eventEditComponent.setFormSubmitHadler(() => {
+    removeOfferElements();
+    replaceEditPointToEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
 for (let i = 0; i < routeCount; i++) {
@@ -97,8 +95,8 @@ for (let i = 0; i < routeCount; i++) {
 const tripEventsSection = document.querySelector('.trip-events');
 const eventEmptyComponent = new EventEmpty();
 
-if(routes.length === 0){
-  render(tripEventsSection, eventEmptyComponent.element, RenderPosition.BEFOREEND);
+if(routes.length === 0) {
+  render(tripEventsSection, eventEmptyComponent, RenderPosition.BEFOREEND);
   siteList.remove();
   sortView.element.remove();
 }
@@ -107,6 +105,6 @@ const selectedOffers = document.querySelectorAll('.event__selected-offers');
 
 for (let i = 0; i < routeCount; i++) {
   for (let j = 0; j < routes[i].offers.length; j++) {
-    render(selectedOffers[i], new EventOffer(routes[i].offers[j]).element, RenderPosition.BEFOREEND);
+    render(selectedOffers[i], new EventOffer(routes[i].offers[j]), RenderPosition.BEFOREEND);
   }
 }

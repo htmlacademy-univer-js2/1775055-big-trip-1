@@ -1,17 +1,12 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createTripAddNewPoint = (route = {}) => {
   const {
     date = null,
     type = null,
     city = null,
-    time = null,
-    offers = null,
     description = null,
-    allPrice = null,
-    favorite = null,
-    photo = null
   } = route;
 
   const dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');
@@ -133,27 +128,15 @@ const createTripAddNewPoint = (route = {}) => {
 </li>`;
 };
 
-export default class AddNewPoint {
-  #element = null;
+export default class AddNewPoint extends AbstractView {
   #addNewPoint = null;
 
   constructor(addNewPoint) {
+    super();
     this.#addNewPoint = addNewPoint;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createTripAddNewPoint(this.#addNewPoint);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
