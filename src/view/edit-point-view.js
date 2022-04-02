@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
-const createTripEditPoint = (route) => {
+const createTripEditPoint = (event) => {
   const {
     date,
     type,
     city,
     description,
-  } = route;
+  } = event;
 
 
   const dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');

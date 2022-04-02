@@ -1,10 +1,9 @@
-import { generateRoute } from './mock/point.js';
+import { generateEvents } from './mock/event.js';
 import TripPresenter from './presentor/trip-presenter.js';
-import { RenderPosition, render } from './render.js';
 
-const routeCount = 5;
+const eventsCount = 5;
 
-const routes = Array.from({ length: routeCount }, generateRoute);
+const events = Array.from({ length: eventsCount }, generateEvents);
 
 const siteNavigationElement = document.querySelector('.trip-controls__navigation');
 
@@ -14,4 +13,4 @@ const tripEvents = document.querySelector('.trip-events');
 
 const tripPresenter = new TripPresenter(tripEvents, siteNavigationElement, siteFilterElement);
 
-tripPresenter.init(routes);
+tripPresenter.init(events);

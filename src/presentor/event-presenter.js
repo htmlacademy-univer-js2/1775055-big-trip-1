@@ -72,9 +72,7 @@ export default class EventPresenter {
 
   #removeOfferElements = () => {
     const offersElement = this.#eventEditComponent.element.querySelectorAll('.event__offer-selector');
-    for (let i = 0; i < this.#tripEvent.offers.length; i++) {
-      offersElement[i].remove();
-    }
+    offersElement.forEach((offer) =>  offer.remove());
   }
 
   #onEscKeyDown = (evt) => {
@@ -88,9 +86,7 @@ export default class EventPresenter {
   #replaceEventToEditPoint = () => {
     replace(this.#eventEditComponent, this.#eventComponent);
     const availableOffers = this.#eventEditComponent.element.querySelector('.event__available-offers');
-    for (let i = 0; i < this.#tripEvent.offers.length; i++) {
-      render(availableOffers, new OfferForEditAndNewPoint(this.#tripEvent.offers[i]), RenderPosition.BEFOREEND);
-    }
+    this.#tripEvent.offers.forEach((offer) =>  render(availableOffers, new OfferForEditAndNewPoint(offer), RenderPosition.BEFOREEND));
     this.#changeMode();
     this.#mode = Mode.EDITING;
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -105,10 +101,7 @@ export default class EventPresenter {
 
   #renderOffers = () => {
     const selectedOffers = this.#eventComponent.element.querySelector('.event__selected-offers');
-
-    for (let i = 0; i < this.#tripEvent.offers.length; i++) {
-      render(selectedOffers, new EventOffer(this.#tripEvent.offers[i]), RenderPosition.BEFOREEND);
-    }
+    this.#tripEvent.offers.forEach((offer) =>  render(selectedOffers, new EventOffer(offer), RenderPosition.BEFOREEND));
   }
 
   #handleFavoriteClick = () => {

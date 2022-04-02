@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
-const createTripEvent = (route) => {
-  const { date, type, city, allPrice, favorite, time } = route;
+const createTripEvent = (event) => {
+  const { date, type, city, allPrice, favorite, time } = event;
 
   const dataDayMonth = dayjs(date.dataBeginEvent).format('D MMM');
 
@@ -34,7 +34,7 @@ const createTripEvent = (route) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-    
+
     </ul>
     <button class="event__favorite-btn ${favoriteClass}" type="button">
       <span class="visually-hidden">Add to favorite</span>

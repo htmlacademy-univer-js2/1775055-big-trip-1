@@ -92,7 +92,7 @@ const generatePhoto = () => {
   return photos;
 };
 
-const generateRoute = () => {
+const generateEvents = () => {
   const date = generateDate();
   const time = generateTime(date);
   const offers = generateOffers();
@@ -113,4 +113,4 @@ const generateRoute = () => {
   };
 };
 
-export { generateRoute };
+export { generateEvents };
