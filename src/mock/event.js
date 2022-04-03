@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import { getRandomNumber, getDiffDates } from './utils.js';
+import { getRandomNumber } from '../utils/common.js';
+import { getDiffDates } from '../utils/date-manipulation.js';
+
 
 let allOffersPrice = 0;
 

@@ -1,5 +1,5 @@
 import AbstractView from './abstract-view.js';
-import {SortType} from '../mock/utils.js';
+import {SortType} from '../utils/sorting.js';
 
 const createTripSort = () => (`<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <div class="trip-sort__item  trip-sort__item--day">

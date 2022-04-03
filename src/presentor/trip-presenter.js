@@ -4,7 +4,9 @@ import ListEventView from '../view/list-event-view.js';
 import SortView from '../view/sort-view.js';
 import EventEmpty from '../view/event-empty.js';
 import EventPresenter from './event-presenter.js';
-import {updateItem, SortType, sortEventDate, sortEventTime, sortEventPrice} from '../mock/utils.js';
+import { SortType, sortEventDate, sortEventTime, sortEventPrice} from '../utils/sorting.js';
+import { updateItem } from '../utils/common.js';
+
 import { RenderPosition, render } from '../render.js';
 
 
