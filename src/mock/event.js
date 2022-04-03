@@ -42,7 +42,8 @@ const generateTime = (date) => {
   return {
     'startTime': `${dayjs(date.dataBeginEvent).format('HH')}:${dayjs(date.dataBeginEvent).format('mm')}`,
     'endTime': `${dayjs(date.dataEndEvent).format('HH')}:${dayjs(date.dataEndEvent).format('mm')}`,
-    'duration': durationFormat
+    'duration': durationFormat,
+    'arrayDurationFormat': duration
   };
 };
 

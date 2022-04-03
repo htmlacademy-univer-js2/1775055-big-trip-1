@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const getRandomNumber = (firstNumber, secondNumber) => {
   const maxNumber = Math.max(firstNumber, secondNumber);
   const minNumber = Math.min(firstNumber, secondNumber);
@@ -12,7 +14,7 @@ const getDiffDates = (dayOne, dayTwo) => {
   const hours = Math.floor(diffDateUnix / (60 * 60 * 1000) - (24 * days));
 
   const minuts = diffDateUnix / (60 * 1000) - (days * 24 * 60) - (hours * 60);
-  return { 'days': days, 'hours': hours, 'minuts': minuts };
+  return { 'days': days, 'hours': hours, 'minuts': minuts, 'unix': diffDateUnix };
 };
 
 const updateItem = (items, update) => {
@@ -29,4 +31,26 @@ const updateItem = (items, update) => {
   ];
 };
 
-export { getRandomNumber, getDiffDates, updateItem };
+const SortType = {
+  DAY: {text: 'day', checked: true},
+  TIME: {text: 'time', checked: false},
+  PRICE: {text: 'price', checked: false},
+};
+
+const sortEventDate = (taskA, taskB) => {
+  return dayjs(taskA.date.dataBeginEvent).diff(dayjs(taskB.date.dataBeginEvent));
+};
+
+const sortEventTime = (taskA, taskB) => {
+  const timeOne = dayjs(taskA.date.dataEndEvent).diff(dayjs(taskA.date.dataBeginEvent));
+  const timeTwo = dayjs(taskB.date.dataEndEvent).diff(dayjs(taskB.date.dataBeginEvent));
+  return timeOne - timeTwo;
+};
+
+const sortEventPrice = (taskA, taskB) => {
+  return taskA.allPrice - taskB.allPrice;
+};
+
+
+
+export { getRandomNumber, getDiffDates, updateItem, SortType, sortEventDate, sortEventTime, sortEventPrice };
