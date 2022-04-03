@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
-const createTripAddNewPoint = (route = {}) => {
+const createTripAddNewPoint = (event = {}) => {
   const {
     date = null,
     type = null,
     city = null,
     description = null,
-  } = route;
+  } = event;
 
   const dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');
   const dataEndEvent = dayjs(date.dataEndEvent).format('YY/MM/DD HH:mm');

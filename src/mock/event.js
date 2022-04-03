@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 import { getRandomNumber, getDiffDates } from './utils.js';
 
 let allOffersPrice = 0;
@@ -91,7 +92,7 @@ const generatePhoto = () => {
   return photos;
 };
 
-const generateRoute = () => {
+const generateEvents = () => {
   const date = generateDate();
   const time = generateTime(date);
   const offers = generateOffers();
@@ -99,6 +100,7 @@ const generateRoute = () => {
   const type = typeRoutes[getRandomNumber(0, 7)];
   allOffersPrice = 0;
   return {
+    id: nanoid(),
     date,
     type,
     city: cityes[getRandomNumber(0, 2)],
@@ -111,4 +113,4 @@ const generateRoute = () => {
   };
 };
 
-export { generateRoute };
+export { generateEvents };
