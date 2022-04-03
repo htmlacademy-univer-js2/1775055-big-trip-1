@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import { getRandomNumber, getDiffDates } from './utils.js';
+import { getRandomNumber } from '../utils/common.js';
+import { getDiffDates } from '../utils/date-manipulation.js';
+
 
 let allOffersPrice = 0;
 
@@ -42,7 +44,8 @@ const generateTime = (date) => {
   return {
     'startTime': `${dayjs(date.dataBeginEvent).format('HH')}:${dayjs(date.dataBeginEvent).format('mm')}`,
     'endTime': `${dayjs(date.dataEndEvent).format('HH')}:${dayjs(date.dataEndEvent).format('mm')}`,
-    'duration': durationFormat
+    'duration': durationFormat,
+    'arrayDurationFormat': duration
   };
 };
 

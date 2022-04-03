@@ -4,7 +4,9 @@ import ListEventView from '../view/list-event-view.js';
 import SortView from '../view/sort-view.js';
 import EventEmpty from '../view/event-empty.js';
 import EventPresenter from './event-presenter.js';
-import {updateItem} from '../mock/utils.js';
+import { SortType, sortEventDate, sortEventTime, sortEventPrice} from '../utils/sorting.js';
+import { updateItem } from '../utils/common.js';
+
 import { RenderPosition, render } from '../render.js';
 
 
@@ -14,6 +16,7 @@ export default class TripPresenter {
   #filterContainer = null;
   #tripEvents = [];
   #eventPresenters = new Map();
+  #currentSortType = null;
 
   #menuComponent = new MenuView();
   #filterComponent = new FilterView();
@@ -46,12 +49,47 @@ export default class TripPresenter {
     this.#eventPresenters.get(updatedEvent.id).init(updatedEvent);
   }
 
+  #sortTasks = (sortType) => {
+    // 2. Этот исходный массив задач необходим,
+    // потому что для сортировки мы будем мутировать
+    // массив в свойстве _boardTasks
+    switch (sortType) {
+      case SortType.DAY.text:
+        this.#tripEvents.sort(sortEventDate);
+        break;
+      case SortType.TIME.text:
+        this.#tripEvents.sort(sortEventTime);
+        break;
+      case SortType.PRICE.text:
+        this.#tripEvents.sort(sortEventPrice);
+        break;
+    }
+
+    this.#currentSortType = sortType;
+
+  }
+
   #renderSort = () => {
     render(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderListEvent = () => {
     render(this.#tripContainer, this.#listEventComponent, RenderPosition.BEFOREEND);
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortTasks(sortType);
+    this.#clearEventList();
+    this.#renderListEvent();
+    this.#renderEvents();
+    // - Очищаем список
+    // - Рендерим список заново
   }
 
   #renderEvent = (tripEvent) => {
@@ -86,5 +124,7 @@ export default class TripPresenter {
     this.#renderListEvent();
 
     this.#renderEvents();
+
+    this.#handleSortTypeChange('day');
   }
 }
