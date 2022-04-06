@@ -1,15 +1,30 @@
 /* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 import { getRandomNumber } from '../utils/common.js';
 import { getDiffDates } from '../utils/date-manipulation.js';
 
-
-let allOffersPrice = 0;
-
-const typeRoutes = [{ title: 'Taxi', img: 'img/icons/taxi.png' }, { title: 'Bus', img: 'img/icons/bus.png' }, { title: 'Drive', img: 'img/icons/drive.png' }, { title: 'Check-in', img: 'img/icons/check-in.png' }, { title: 'Flight', img: 'img/icons/flight.png' }, { title: 'Restaurant', img: 'img/icons/restaurant.png' }, { title: 'Sightseeing', img: 'img/icons/sightseeing.png' }, { title: 'Train', img: 'img/icons/train.png' }];
+const typeRoutes = [
+  { title: 'Taxi', img: 'img/icons/taxi.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Bus', img: 'img/icons/bus.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Drive', img: 'img/icons/drive.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Check-in', img: 'img/icons/check-in.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Flight', img: 'img/icons/flight.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Restaurant', img: 'img/icons/restaurant.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Sightseeing', img: 'img/icons/sightseeing.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'Train', img: 'img/icons/train.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 }
+];
 
 const cityes = ['Amsterdam', 'Geneva', 'Chamonix'];
+
+const offersTitle = [
+  { 'text': 'Add luggage', 'id': 'luggage' },
+  { 'text': 'Switch to comfort', 'id': 'comfort' },
+  { 'text': 'Add meal', 'id': 'meal' },
+  { 'text': 'Choose seats', 'id': 'seats' },
+  { 'text': 'Travel by train', 'id': 'train' }
+];
+
 
 
 const generateDate = () => {
@@ -29,7 +44,7 @@ const generateDate = () => {
 const generateTime = (date) => {
   const dateBegin = new Date('', dayjs(date.dataBeginEvent).format('M'), dayjs(date.dataBeginEvent).format('D'), dayjs(date.dataBeginEvent).format('H'), dayjs(date.dataBeginEvent).format('m'));
   const dateEnd = new Date('', dayjs(date.dataEndEvent).format('M'), dayjs(date.dataEndEvent).format('D'), dayjs(date.dataEndEvent).format('H'), dayjs(date.dataEndEvent).format('m'));
-  const duration = getDiffDates(dateBegin, dateEnd);
+  const duration = getDiffDates(date.dataBeginEvent, date.dataEndEvent);
   let durationFormat = '';
   if (duration.days !== 0) {
     durationFormat += `${(`0${duration.days}`).slice(-2)}D ${(`0${duration.hours}`).slice(-2)}H ${(`0${duration.minuts}`).slice(-2)}M`;
@@ -64,24 +79,30 @@ const generateDescription = () => {
 };
 
 const generateOffers = () => {
-  const offersTitleArray = [{ 'text': 'Add luggage', 'id': 'luggage' }, { 'text': 'Switch to comfort', 'id': 'comfort' }, { 'text': 'Add meal', 'id': 'meal' }, { 'text': 'Choose seats', 'id': 'seats' }, { 'text': 'Travel by train', 'id': 'train' }];
-  const countOffers = getRandomNumber(0, 5);
-  const offersArray = [];
-  for (let i = 0; i < countOffers; i++) {
-    const numberElement = getRandomNumber(0, offersTitleArray.length - 1);
-    const offerTitleArray = offersTitleArray[numberElement];
-    offersTitleArray.splice(numberElement, 1);
+  typeRoutes.forEach((typeRoute) => {
+    const cloneOfferTitle = offersTitle.slice(0);
+    let countOffers = getRandomNumber(0, 5);
 
-    const offer = {
-      title: offerTitleArray,
-      price: getRandomNumber(10, 100)
-    };
-    allOffersPrice += offer.price;
-    offersArray.push(offer);
-  }
-
-  return offersArray;
+    for (let i = 0; i < offersTitle.length; i++) {
+      const numberElement = getRandomNumber(0, cloneOfferTitle.length - 1);
+      const offerTitleElement = cloneOfferTitle[numberElement];
+      const offer = {
+        title: offerTitleElement,
+        price: getRandomNumber(10, 100)
+      };
+      typeRoute.allOffer.push(offer);
+      if (countOffers > 0) {
+        typeRoute.selectedOffer.push(offer);
+        typeRoute.allPriceOffers += offer.price;
+        countOffers--;
+        cloneOfferTitle.splice(numberElement, 1);
+      }
+    }
+  });
+  console.log(typeRoutes);
 };
+
+generateOffers();
 
 const generatePhoto = () => {
   const photos = [];
@@ -98,17 +119,14 @@ const generatePhoto = () => {
 const generateEvents = () => {
   const date = generateDate();
   const time = generateTime(date);
-  const offers = generateOffers();
-  const allPrice = allOffersPrice + getRandomNumber(10, 30);
   const type = typeRoutes[getRandomNumber(0, 7)];
-  allOffersPrice = 0;
+  const allPrice = type.allPriceOffers + getRandomNumber(10, 30);
   return {
     id: nanoid(),
     date,
     type,
     city: cityes[getRandomNumber(0, 2)],
     time,
-    offers,
     description: generateDescription(),
     allPrice,
     favorite: Boolean(getRandomNumber(0, 1)),

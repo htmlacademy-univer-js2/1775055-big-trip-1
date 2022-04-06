@@ -86,7 +86,7 @@ export default class EventPresenter {
   #replaceEventToEditPoint = () => {
     replace(this.#eventEditComponent, this.#eventComponent);
     const availableOffers = this.#eventEditComponent.element.querySelector('.event__available-offers');
-    this.#tripEvent.offers.forEach((offer) =>  render(availableOffers, new OfferForEditAndNewPoint(offer), RenderPosition.BEFOREEND));
+    this.#tripEvent.type.allOffer.forEach((offer) =>  render(availableOffers, new OfferForEditAndNewPoint(offer), RenderPosition.BEFOREEND));
     this.#changeMode();
     this.#mode = Mode.EDITING;
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -101,7 +101,7 @@ export default class EventPresenter {
 
   #renderOffers = () => {
     const selectedOffers = this.#eventComponent.element.querySelector('.event__selected-offers');
-    this.#tripEvent.offers.forEach((offer) =>  render(selectedOffers, new EventOffer(offer), RenderPosition.BEFOREEND));
+    this.#tripEvent.type.selectedOffer.forEach((offer) =>  render(selectedOffers, new EventOffer(offer), RenderPosition.BEFOREEND));
   }
 
   #handleFavoriteClick = () => {
