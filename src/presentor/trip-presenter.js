@@ -50,9 +50,6 @@ export default class TripPresenter {
   }
 
   #sortTasks = (sortType) => {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
     switch (sortType) {
       case SortType.DAY.text:
         this.#tripEvents.sort(sortEventDate);
@@ -66,7 +63,6 @@ export default class TripPresenter {
     }
 
     this.#currentSortType = sortType;
-
   }
 
   #renderSort = () => {
@@ -79,7 +75,6 @@ export default class TripPresenter {
   }
 
   #handleSortTypeChange = (sortType) => {
-    // - Сортируем задачи
     if (this.#currentSortType === sortType) {
       return;
     }
@@ -88,8 +83,6 @@ export default class TripPresenter {
     this.#clearEventList();
     this.#renderListEvent();
     this.#renderEvents();
-    // - Очищаем список
-    // - Рендерим список заново
   }
 
   #renderEvent = (tripEvent) => {

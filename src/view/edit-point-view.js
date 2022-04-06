@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
-const createTripEditPoint = (event) => {
+const createTripEditPoint = (event = {}) => {
   const {
-    date,
-    type,
-    city,
-    description,
+    date = null,
+    type = null,
+    city = null,
+    description = null,
   } = event;
 
 
@@ -78,7 +78,7 @@ const createTripEditPoint = (event) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type.title}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.titleCity}" list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -119,7 +119,7 @@ const createTripEditPoint = (event) => {
 
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
+        <p class="event__destination-description">${city.description}</p>
       </section>
     </section>
   </form>
