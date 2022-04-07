@@ -2,13 +2,13 @@ import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
 const createTripEvent = (event) => {
-  const { date, type, city, allPrice, favorite, time } = event;
+  const { date, type, city,allPrice, favorite, time } = event;
 
   const dataDayMonth = dayjs(date.dataBeginEvent).format('D MMM');
 
   let favoriteClass = '';
-  const title = type.title;
-  const img = type.img;
+  const title = type.currentType.title;
+  const img = type.currentType.img;
 
   if (favorite === true) {
     favoriteClass = 'event__favorite-btn--active';
@@ -20,7 +20,7 @@ const createTripEvent = (event) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="${img}" alt="Event type icon">
     </div>
-    <h3 class="event__title">${title} ${city.titleCity}</h3>
+    <h3 class="event__title">${title} ${city.currentCity.titleCity}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="2019-03-18T10:30">${time.startTime}</time>

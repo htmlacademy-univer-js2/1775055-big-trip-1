@@ -1,15 +1,62 @@
 import dayjs from 'dayjs';
-import AbstractView from './abstract-view.js';
+import SmartView from './smart-view.js';
+
+const createphotoContainer = (photo) => (
+  `<div class="event__photos-container">
+  <div class="event__photos-tape">
+  ${photo}
+  </div>
+</div>`
+);
+
+const createTripPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`;
+
+const createOfferForEditAndNewPoint = (offer) => {
+  const { title, price } = offer;
+  return `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title.id}-1" type="checkbox" name="event-offer-${title.id}">
+  <label class="event__offer-label" for="event-offer-${title.id}-1">
+    <span class="event__offer-title">${title.text}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${price}</span>
+  </label>
+</div>`;
+};
 
 const createTripEditPoint = (event = {}) => {
   const {
     date = null,
     type = null,
     city = null,
-    description = null,
+
   } = event;
 
-
+  type.arrayType.forEach((arrayTypeElement) => {
+    if (arrayTypeElement.title === type.currentType.title) {
+      type.currentType = arrayTypeElement;
+    }
+  });
+  let offersView = '';
+  type.currentType.allOffer.forEach((offer) => {
+    const offerCurrent = createOfferForEditAndNewPoint(offer);
+    offersView += offerCurrent;
+  });
+  city.arrayCity.forEach((arrayCityElement) => {
+    if(arrayCityElement.titleCity === city.currentCity.titleCity){
+      if(city.currentCity.isShowPhoto) {
+        city.currentCity = arrayCityElement;
+        city.currentCity.isShowPhoto = true;
+      }
+      else {
+        city.currentCity = arrayCityElement;
+      }
+    }
+  })
+  let photoTemplate = '';
+  if(city.currentCity.isShowPhoto) {
+    city.currentCity.photos.forEach((photo) => photoTemplate += createTripPhoto(photo));
+    photoTemplate = createphotoContainer(photoTemplate);
+  }
   const dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');
   const dataEndEvent = dayjs(date.dataEndEvent).format('YY/MM/DD HH:mm');
   return `<li class="trip-events__item">
@@ -18,7 +65,7 @@ const createTripEditPoint = (event = {}) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="${type.img}" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="${type.currentType.img}" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -27,47 +74,47 @@ const createTripEditPoint = (event = {}) => {
             <legend class="visually-hidden">Event type</legend>
 
             <div class="event__type-item">
-              <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+              <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${type.currentType.title === 'taxi' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+              <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${type.currentType.title === 'bus' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+              <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${type.currentType.title === 'train' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+              <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${type.currentType.title === 'ship' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+              <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${type.currentType.title === 'drive' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+              <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${type.currentType.title === 'flight' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+              <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${type.currentType.title === 'check-in' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+              <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${type.currentType.title === 'sightseeing' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
             </div>
 
             <div class="event__type-item">
-              <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+              <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${type.currentType.title === 'restaurant' ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
             </div>
           </fieldset>
@@ -76,9 +123,9 @@ const createTripEditPoint = (event = {}) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-          ${type.title}
+          ${type.currentType.title}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.titleCity}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.currentCity.titleCity}" list="destination-list-1">
         <datalist id="destination-list-1">
           <option value="Amsterdam"></option>
           <option value="Geneva"></option>
@@ -113,38 +160,66 @@ const createTripEditPoint = (event = {}) => {
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
-
+          ${offersView}
         </div>
       </section>
 
       <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${city.description}</p>
+        <p class="event__destination-description">${city.currentCity.description}</p>
+        ${photoTemplate}
       </section>
     </section>
   </form>
 </li>`;
 };
 
-export default class EditPoint extends AbstractView {
-  #editPoint = null;
+export default class EditPoint extends SmartView {
 
   constructor(editPoint) {
     super();
-    this.#editPoint = editPoint;
+    this._data = { ...editPoint };
+    this.#setInnerHandlers();
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHadler(this._callback.formSubmit);
+    this.setClickRollupHandler(this._callback.click)
   }
 
   get template() {
-    return createTripEditPoint(this.#editPoint);
+    return createTripEditPoint(this._data);
+  }
+
+  reset = (task) => {
+    this.updateData(
+      task,
+    );
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group').addEventListener('change',  this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change',  this.#cityChangeHandler);
+  }
+
+  #cityChangeHandler = (evt) => {
+    this.updateData({ city: { currentCity: { titleCity: evt.target.value, isShowPhoto: true }, arrayCity: this._data.city.arrayCity } });
+  }
+
+  #typeChangeHandler = (evt) => {
+    this.updateData({ type: { currentType: { title: evt.target.value }, arrayType: this._data.type.arrayType } });
   }
 
   setClickRollupHandler = (callback) => {
     this._callback.click = callback;
+    this._data.city.currentCity.isShowPhoto = false;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
   }
 
   setFormSubmitHadler = (callback) => {
     this._callback.formSubmit = callback;
+    this._data.city.currentCity.isShowPhoto = false;
     this.element.querySelector('.event').addEventListener('submit', this.#formSubmitHandler);
   }
 

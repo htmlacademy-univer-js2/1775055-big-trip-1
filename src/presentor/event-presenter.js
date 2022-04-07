@@ -1,8 +1,7 @@
 import EventView from '../view/item-event-view.js';
 import EditPoint from '../view/edit-point-view.js';
-import OfferForEditAndNewPoint from '../view/offer-edit-and-new-point.js';
 import EventOffer from '../view/event-offer-view.js';
-import { RenderPosition, render, replace , remove } from '../render.js';
+import { RenderPosition, render, replace, remove } from '../render.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -39,19 +38,19 @@ export default class EventPresenter {
     this.#eventEditComponent.setClickRollupHandler(this.#replaceEditPointToEvent);
     this.#eventEditComponent.setFormSubmitHadler(this.#replaceEditPointToEvent);
     this.#eventComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    
-    if(prevEventComponent === null || prevEventEditComponent === null){
+
+    if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventListContainer, this.#eventComponent, RenderPosition.BEFOREEND);
       this.#renderOffers();
       return;
     }
 
-    if(this.#mode === Mode.DEFAULT){
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#eventComponent, prevEventComponent);
       this.#renderOffers();
     }
 
-    if(this.#mode === Mode.EDITING){
+    if (this.#mode === Mode.EDITING) {
       replace(this.#eventEditComponent, prevEventEditComponent);
     }
 
@@ -61,18 +60,13 @@ export default class EventPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
-        this.#replaceEditPointToEvent();
+      this.#replaceEditPointToEvent();
     }
   }
 
   destroy = () => {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
-  }
-
-  #removeOfferElements = () => {
-    const offersElement = this.#eventEditComponent.element.querySelectorAll('.event__offer-selector');
-    offersElement.forEach((offer) =>  offer.remove());
   }
 
   #onEscKeyDown = (evt) => {
@@ -85,15 +79,13 @@ export default class EventPresenter {
 
   #replaceEventToEditPoint = () => {
     replace(this.#eventEditComponent, this.#eventComponent);
-    const availableOffers = this.#eventEditComponent.element.querySelector('.event__available-offers');
-    this.#tripEvent.type.allOffer.forEach((offer) =>  render(availableOffers, new OfferForEditAndNewPoint(offer), RenderPosition.BEFOREEND));
     this.#changeMode();
     this.#mode = Mode.EDITING;
     document.addEventListener('keydown', this.#onEscKeyDown);
   }
-    
+
   #replaceEditPointToEvent = () => {
-    this.#removeOfferElements();
+    this.#eventEditComponent.reset(this.#tripEvent)
     replace(this.#eventComponent, this.#eventEditComponent);
     document.removeEventListener('keydown', this.#onEscKeyDown);
     this.#mode = Mode.DEFAULT;
@@ -101,10 +93,10 @@ export default class EventPresenter {
 
   #renderOffers = () => {
     const selectedOffers = this.#eventComponent.element.querySelector('.event__selected-offers');
-    this.#tripEvent.type.selectedOffer.forEach((offer) =>  render(selectedOffers, new EventOffer(offer), RenderPosition.BEFOREEND));
+    this.#tripEvent.type.currentType.selectedOffer.forEach((offer) => render(selectedOffers, new EventOffer(offer), RenderPosition.BEFOREEND));
   }
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#tripEvent, favorite: !this.#tripEvent.favorite});
+    this.#changeData({ ...this.#tripEvent, favorite: !this.#tripEvent.favorite });
   }
 }

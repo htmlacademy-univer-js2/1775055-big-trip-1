@@ -5,20 +5,20 @@ import { getRandomNumber } from '../utils/common.js';
 import { getDiffDates } from '../utils/date-manipulation.js';
 
 const typeRoutes = [
-  { title: 'Taxi', img: 'img/icons/taxi.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Bus', img: 'img/icons/bus.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Drive', img: 'img/icons/drive.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Check-in', img: 'img/icons/check-in.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Flight', img: 'img/icons/flight.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Restaurant', img: 'img/icons/restaurant.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Sightseeing', img: 'img/icons/sightseeing.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
-  { title: 'Train', img: 'img/icons/train.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 }
+  { title: 'taxi', img: 'img/icons/taxi.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'bus', img: 'img/icons/bus.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'drive', img: 'img/icons/drive.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'check-in', img: 'img/icons/check-in.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'flight', img: 'img/icons/flight.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'restaurant', img: 'img/icons/restaurant.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'sightseeing', img: 'img/icons/sightseeing.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'train', img: 'img/icons/train.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 }
 ];
 
 const cityes = [
-  { titleCity: 'Amsterdam', description: '', photos: [] },
-  { titleCity: 'Geneva', description: '', photos: [] },
-  { titleCity: 'Chamonix', description: '', photos: [] }
+  { titleCity: 'Amsterdam', description: '', photos: [], isShowPhoto: false },
+  { titleCity: 'Geneva', description: '', photos: [], isShowPhoto: false },
+  { titleCity: 'Chamonix', description: '', photos: [], isShowPhoto: false }
 ];
 
 const offersTitle = [
@@ -120,13 +120,13 @@ generatePhoto();
 const generateEvents = () => {
   const date = generateDate();
   const time = generateTime(date);
-  const type = typeRoutes[getRandomNumber(0, 7)];
-  const allPrice = type.allPriceOffers + getRandomNumber(10, 30);
+  const type = { currentType: typeRoutes[getRandomNumber(0, 7)], arrayType: typeRoutes };
+  const allPrice = type.currentType.allPriceOffers + getRandomNumber(10, 30);
   return {
     id: nanoid(),
     date,
     type,
-    city: cityes[getRandomNumber(0, 2)],
+    city: {currentCity: cityes[getRandomNumber(0, 2)], arrayCity: cityes},
     time,
     allPrice,
     favorite: Boolean(getRandomNumber(0, 1)),
