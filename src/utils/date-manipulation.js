@@ -1,5 +1,7 @@
+import dayjs from 'dayjs';
+
 const getDiffDates = (dayOne, dayTwo) => {
-  const diffDateUnix = Math.abs(dayOne - dayTwo);
+  const diffDateUnix = Math.abs(dayjs(dayOne).diff(dayjs(dayTwo)));
 
   const days = Math.floor(diffDateUnix / (24 * 60 * 60 * 1000));
 
