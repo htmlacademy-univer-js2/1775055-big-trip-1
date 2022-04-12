@@ -4,7 +4,7 @@ import ListEventView from '../view/list-event-view.js';
 import SortView from '../view/sort-view.js';
 import EventEmpty from '../view/event-empty.js';
 import EventPresenter from './event-presenter.js';
-import { SortType, sortEventDate, sortEventTime, sortEventPrice} from '../utils/sorting.js';
+import { SortType, sortEventDate, sortEventTime, sortEventPrice } from '../utils/sorting.js';
 import { updateItem } from '../utils/common.js';
 
 import { RenderPosition, render } from '../render.js';
@@ -20,7 +20,7 @@ export default class TripPresenter {
 
   #menuComponent = new MenuView();
   #filterComponent = new FilterView();
-  #sortComponent =  new SortView();
+  #sortComponent = new SortView();
   #listEventComponent = new ListEventView();
   #eventEmptyComponent = new EventEmpty();
 
@@ -30,7 +30,7 @@ export default class TripPresenter {
     this.#menuContainer = menuContainer;
     this.#filterContainer = filterContainer;
   }
- 
+
   init = (tripEvents) => {
     this.#tripEvents = [...tripEvents];
 
@@ -92,7 +92,7 @@ export default class TripPresenter {
   }
 
   #renderEvents = () => {
-    this.#tripEvents.forEach((tripEvent) => this.#renderEvent(tripEvent) )
+    this.#tripEvents.forEach((tripEvent) => this.#renderEvent(tripEvent));
   }
 
   #clearEventList = () => {
@@ -107,7 +107,7 @@ export default class TripPresenter {
   }
 
   #renderBoard = () => {
-    if(this.#tripEvents.length === 0) {
+    if (this.#tripEvents.length === 0) {
       this.#renderNoEvents();
       return;
     }

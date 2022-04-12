@@ -85,7 +85,7 @@ export default class EventPresenter {
   }
 
   #replaceEditPointToEvent = () => {
-    this.#eventEditComponent.reset(this.#tripEvent)
+    this.#eventEditComponent.reset(this.#tripEvent);
     replace(this.#eventComponent, this.#eventEditComponent);
     document.removeEventListener('keydown', this.#onEscKeyDown);
     this.#mode = Mode.DEFAULT;

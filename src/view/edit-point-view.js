@@ -54,10 +54,13 @@ const createTripEditPoint = (event = {}) => {
         city.currentCity = arrayCityElement;
       }
     }
-  })
+  });
   let photoTemplate = '';
   if (city.currentCity.isShowPhoto) {
-    city.currentCity.photos.forEach((photo) => photoTemplate += createTripPhoto(photo));
+    city.currentCity.photos.forEach((photo) => {
+      const onePhotoTemplate = createTripPhoto(photo);
+      photoTemplate += onePhotoTemplate;
+    });
     photoTemplate = createphotoContainer(photoTemplate);
   }
   const dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');
@@ -194,7 +197,7 @@ export default class EditPoint extends SmartView {
     this.#setBeginData();
     this.#setEndData();
     this.setFormSubmitHadler(this._callback.formSubmit);
-    this.setClickRollupHandler(this._callback.click)
+    this.setClickRollupHandler(this._callback.click);
   }
 
   get template() {
