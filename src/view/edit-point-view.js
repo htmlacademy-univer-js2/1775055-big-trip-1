@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
 import SmartView from './smart-view.js';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createphotoContainer = (photo) => (
   `<div class="event__photos-container">
@@ -42,8 +45,8 @@ const createTripEditPoint = (event = {}) => {
     offersView += offerCurrent;
   });
   city.arrayCity.forEach((arrayCityElement) => {
-    if(arrayCityElement.titleCity === city.currentCity.titleCity){
-      if(city.currentCity.isShowPhoto) {
+    if (arrayCityElement.titleCity === city.currentCity.titleCity) {
+      if (city.currentCity.isShowPhoto) {
         city.currentCity = arrayCityElement;
         city.currentCity.isShowPhoto = true;
       }
@@ -53,7 +56,7 @@ const createTripEditPoint = (event = {}) => {
     }
   })
   let photoTemplate = '';
-  if(city.currentCity.isShowPhoto) {
+  if (city.currentCity.isShowPhoto) {
     city.currentCity.photos.forEach((photo) => photoTemplate += createTripPhoto(photo));
     photoTemplate = createphotoContainer(photoTemplate);
   }
@@ -175,15 +178,21 @@ const createTripEditPoint = (event = {}) => {
 };
 
 export default class EditPoint extends SmartView {
+  #datepicker = null;
 
   constructor(editPoint) {
     super();
     this._data = { ...editPoint };
     this.#setInnerHandlers();
+
+    this.#setBeginData();
+    this.#setEndData();
   }
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setBeginData();
+    this.#setEndData();
     this.setFormSubmitHadler(this._callback.formSubmit);
     this.setClickRollupHandler(this._callback.click)
   }
@@ -192,15 +201,57 @@ export default class EditPoint extends SmartView {
     return createTripEditPoint(this._data);
   }
 
+  removeElement = () => {
+    super.removeElement();
+
+    this.#datepicker.destroy();
+    this.#datepicker = null;
+  }
+
   reset = (task) => {
     this.updateData(
       task,
     );
   }
 
+  #setBeginData = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:m',
+        defaultDate: this._data.date.dataBeginEvent,
+        onChange: this.#beginDateChangeHandler,
+      },
+    );
+  }
+
+  #setEndData = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:m',
+        defaultDate: this._data.date.dataEndEvent,
+        onChange: this.#endDateChangeHandler,
+      },
+    );
+  }
+
+  #beginDateChangeHandler = ([userDate]) => {
+    this.updateData({
+      date: { dataBeginEvent: userDate, dataEndEvent: this._data.date.dataEndEvent },
+    });
+  }
+
+  #endDateChangeHandler = ([userDate]) => {
+    this.updateData({
+      date: { dataBeginEvent: this._data.date.dataBeginEvent, dataEndEvent: userDate },
+    });
+  }
+
+
   #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-group').addEventListener('change',  this.#typeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change',  this.#cityChangeHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#cityChangeHandler);
   }
 
   #cityChangeHandler = (evt) => {
