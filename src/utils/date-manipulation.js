@@ -11,4 +11,6 @@ const getDiffDates = (dayOne, dayTwo) => {
   return { 'days': days, 'hours': hours, 'minuts': minuts, 'unix': diffDateUnix };
 };
 
-export{getDiffDates}
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
+export { getDiffDates, isDatesEqual };

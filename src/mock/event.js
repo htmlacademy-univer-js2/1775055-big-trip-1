@@ -8,6 +8,7 @@ const typeRoutes = [
   { title: 'taxi', img: 'img/icons/taxi.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
   { title: 'bus', img: 'img/icons/bus.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
   { title: 'drive', img: 'img/icons/drive.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
+  { title: 'ship', img: 'img/icons/ship.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
   { title: 'check-in', img: 'img/icons/check-in.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
   { title: 'flight', img: 'img/icons/flight.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
   { title: 'restaurant', img: 'img/icons/restaurant.png', allOffer: [], selectedOffer: [], allPriceOffers: 0 },
@@ -29,11 +30,9 @@ const offersTitle = [
   { 'text': 'Travel by train', 'id': 'train' }
 ];
 
-
-
 const generateDate = () => {
   const maxDaysGag = 7;
-  const daysGap = getRandomNumber(0, maxDaysGag);
+  const daysGap = getRandomNumber(-7, maxDaysGag);
   const daysAddition = daysGap + getRandomNumber(0, 2);
   const startHoursAddition = getRandomNumber(1, 6);
   const endHoursAddition = getRandomNumber(startHoursAddition, startHoursAddition + 10);
@@ -76,7 +75,7 @@ const generateDescription = () => {
       descriptionArray.splice(elementNumber, 1);
       city.description += descriptionArrayElement;
     }
-  })
+  });
 };
 
 const generateOffers = () => {
@@ -96,8 +95,8 @@ const generateOffers = () => {
         typeRoute.selectedOffer.push(offer);
         typeRoute.allPriceOffers += offer.price;
         countOffers--;
-        cloneOfferTitle.splice(numberElement, 1);
       }
+      cloneOfferTitle.splice(numberElement, 1);
     }
   });
 };
@@ -110,7 +109,7 @@ const generatePhoto = () => {
       numberPhoto += getRandomNumber(1, 10);
       city.photos.push(`http://picsum.photos/248/152?r=${numberPhoto}`);
     }
-  })
+  });
 };
 
 generateOffers();
@@ -133,4 +132,4 @@ const generateEvents = () => {
   };
 };
 
-export { generateEvents };
+export { generateEvents, generateTime };

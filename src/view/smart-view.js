@@ -8,7 +8,7 @@ export default class SmartView extends AbstractView {
       return;
     }
 
-    this._data = {...this._data, ...update};
+    this._data = { ...this._data, ...update };
 
     this.updateElement();
   }
@@ -21,7 +21,7 @@ export default class SmartView extends AbstractView {
     const newElement = this.element;
 
     parent.replaceChild(newElement, prevElement);
-    
+
     this.restoreHandlers();
   }
 
