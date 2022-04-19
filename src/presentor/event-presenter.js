@@ -1,6 +1,7 @@
 import EventView from '../view/item-event-view.js';
 import EditPoint from '../view/edit-point-view.js';
-import EventOffer from '../view/event-offer-view.js';
+import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual } from '../utils/date-manipulation.js';
 import { RenderPosition, render, replace, remove } from '../render.js';
 
 const Mode = {
@@ -36,18 +37,17 @@ export default class EventPresenter {
 
     this.#eventComponent.setClickRollupHandler(this.#replaceEventToEditPoint);
     this.#eventEditComponent.setClickRollupHandler(this.#replaceEditPointToEvent);
-    this.#eventEditComponent.setFormSubmitHadler(this.#replaceEditPointToEvent);
+    this.#eventEditComponent.setFormSubmitHadler(this.#handleFormSubmit);
     this.#eventComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventListContainer, this.#eventComponent, RenderPosition.BEFOREEND);
-      this.#renderOffers();
       return;
     }
 
     if (this.#mode === Mode.DEFAULT) {
       replace(this.#eventComponent, prevEventComponent);
-      this.#renderOffers();
     }
 
     if (this.#mode === Mode.EDITING) {
@@ -91,12 +91,33 @@ export default class EventPresenter {
     this.#mode = Mode.DEFAULT;
   }
 
-  #renderOffers = () => {
-    const selectedOffers = this.#eventComponent.element.querySelector('.event__selected-offers');
-    this.#tripEvent.type.currentType.selectedOffer.forEach((offer) => render(selectedOffers, new EventOffer(offer), RenderPosition.BEFOREEND));
-  }
-
   #handleFavoriteClick = () => {
     this.#changeData({ ...this.#tripEvent, favorite: !this.#tripEvent.favorite });
+    this.#changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.PATCH,
+      { ...this.#tripEvent, favorite: !this.#tripEvent.favorite },
+    );
+  }
+
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+      !isDatesEqual(this.#tripEvent.date.dataBeginEvent, update.date.dataBeginEvent) ||
+      !isDatesEqual(this.#tripEvent.date.dataEndEvent, update.date.dataEndEvent);
+
+    this.#changeData(
+      UserAction.UPDATE_EVENT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+    this.#replaceEditPointToEvent();
+  }
+
+  #handleDeleteClick = (event) => {
+    this.#changeData(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
   }
 }

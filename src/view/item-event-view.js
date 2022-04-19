@@ -1,10 +1,27 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract-view.js';
 
+const createTripEventOffer = (offer) => {
+  const { title, price } = offer;
+  return `<li class="event__offer">
+  <span class="event__offer-title">${title.text}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${price}</span>
+</li>`;
+};
+
 const createTripEvent = (event) => {
   const { date, type, city,allPrice, favorite, time } = event;
 
   const dataDayMonth = dayjs(date.dataBeginEvent).format('D MMM');
+  let offersView = '';
+
+  if(type.currentType.selectedOffer) {
+    type.currentType.selectedOffer.forEach((offer) => {
+      const offerCurrent = createTripEventOffer(offer);
+      offersView += offerCurrent;
+    });
+  }
 
   let favoriteClass = '';
   const title = type.currentType.title;
@@ -34,7 +51,7 @@ const createTripEvent = (event) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-
+      ${offersView}
     </ul>
     <button class="event__favorite-btn ${favoriteClass}" type="button">
       <span class="visually-hidden">Add to favorite</span>
