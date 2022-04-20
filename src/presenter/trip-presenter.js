@@ -2,10 +2,11 @@ import ListEventView from '../view/list-event-view.js';
 import SortView from '../view/sort-view.js';
 import EventEmpty from '../view/event-empty.js';
 import EventPresenter from './event-presenter.js';
-import EventNewPresenter from './event-new-presentor.js';
+import EventNewPresenter from './event-new-presenter.js';
 import { UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 import { generateEvents } from '../mock/event.js';
+import { clearStats } from '../utils/statistic.js';
 import { SortType, sortEventDate, sortEventTime, sortEventPrice } from '../utils/sorting.js';
 
 import { RenderPosition, render, remove } from '../render.js';
@@ -17,7 +18,6 @@ export default class TripPresenter {
   #currentSortType = SortType.DAY.text;
   #eventsModel = null;
   #filterModel = null;
-  #menuTemplate = null;
 
   #sortComponent = null;
   #listEventComponent = new ListEventView();
@@ -25,11 +25,10 @@ export default class TripPresenter {
   #filterType = FilterType.EVERYTHING;
 
 
-  constructor(tripContainer, eventsModel, filterModel, menuTemplate) {
+  constructor(tripContainer, eventsModel, filterModel) {
     this.#tripContainer = tripContainer;
     this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
-    this.#menuTemplate = menuTemplate;
 
     this.#eventNewPresenter = new EventNewPresenter(this.#listEventComponent, this.#handleViewAction);
   }
@@ -99,6 +98,7 @@ export default class TripPresenter {
     this.#handleModeChange();
     this.#currentSortType = SortType.DAY.text;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    clearStats();
     this.#eventNewPresenter.init(createEventData);
   }
 

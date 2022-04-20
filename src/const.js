@@ -21,3 +21,16 @@ export const MenuItem = {
   EVENTS: 'EVENTS',
   STATISTICS: 'STATISTICS',
 };
+
+export const typeEvent = {
+  TAXI: 'taxi',
+  BUS: 'bus',
+  TRAIN: 'train',
+  SHIP: 'ship',
+  FLIGHT: 'flight',
+  DRIVE: 'drive',
+  RESTAURANT: 'restaurant',
+  CHECKIN: 'check-in',
+  SIGHTSEEING: 'sightseeing'
+};
+

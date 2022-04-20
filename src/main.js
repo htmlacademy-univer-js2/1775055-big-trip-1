@@ -1,14 +1,15 @@
 import { generateEvents } from './mock/event.js';
-import TripPresenter from './presentor/trip-presenter.js';
+import TripPresenter from './presenter/trip-presenter.js';
 import EventsModel from './model/events-model.js';
 import FilterModel from './model/filter-model.js';
-import FilterPresenter from './presentor/filter-presentor.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 import MenuView from './view/menu-view.js';
 import { MenuItem } from './const.js';
+import { countingStats, clearStats } from './utils/statistic.js';
 import StatisticsView from './view/statistics-view.js';
-import { RenderPosition, render } from './render.js';
+import { RenderPosition, render, remove } from './render.js';
 
-const eventsCount = 10;
+const eventsCount = 30;
 
 const events = Array.from({ length: eventsCount }, generateEvents);
 
@@ -28,30 +29,27 @@ eventsModel.events = events;
 const filterModel = new FilterModel();
 
 render(siteMenuContainer, siteMenuComponent, RenderPosition.BEFOREEND);
-const tripPresenter = new TripPresenter(tripEvents, eventsModel, filterModel, siteMenuComponent);
+const tripPresenter = new TripPresenter(tripEvents, eventsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel);
 
 filterPresenter.init();
 
 tripPresenter.init();
 
+let statsView = null;
+
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
-    case MenuItem.ADD_NEW_EVENT:
-      // Скрыть статистику
-      // Показать фильтры
-      // Показать доску
-      // Показать форму добавления новой задачи
-      // Убрать выделение с ADD NEW TASK после сохранения
-      break;
     case MenuItem.EVENTS:
       filterPresenter.init();
       tripPresenter.init();
+      remove(statsView);
+      clearStats();
       break;
     case MenuItem.STATISTICS:
-      // Скрыть фильтры
-      // Скрыть доску
-      // Показать статистику
+      countingStats(eventsModel.events);
+      statsView = new StatisticsView();
+      render(siteMainElement, statsView, RenderPosition.BEFOREEND);
       filterPresenter.destroy();
       tripPresenter.destroy();
       break;
