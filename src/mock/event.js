@@ -119,7 +119,7 @@ generatePhoto();
 const generateEvents = () => {
   const date = generateDate();
   const time = generateTime(date);
-  const type = { currentType: typeRoutes[getRandomNumber(0, 7)], arrayType: typeRoutes };
+  const type = { currentType: typeRoutes[getRandomNumber(0, 8)], arrayType: typeRoutes };
   const allPrice = type.currentType.allPriceOffers + getRandomNumber(10, 30);
   return {
     id: nanoid(),

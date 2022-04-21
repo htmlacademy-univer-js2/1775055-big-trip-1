@@ -11,9 +11,11 @@ const sortEventDate = (taskA, taskB) => dayjs(taskA.date.dataBeginEvent).diff(da
 const sortEventTime = (taskA, taskB) => {
   const timeOne = dayjs(taskA.date.dataEndEvent).diff(dayjs(taskA.date.dataBeginEvent));
   const timeTwo = dayjs(taskB.date.dataEndEvent).diff(dayjs(taskB.date.dataBeginEvent));
-  return timeOne - timeTwo;
+  return timeTwo - timeOne;
 };
 
 const sortEventPrice = (taskA, taskB) => taskA.allPrice - taskB.allPrice;
 
-export { sortEventDate, sortEventTime, sortEventPrice, SortType };
+const sortStats = (taskA, taskB) => taskB[1] - taskA[1];
+
+export { sortEventDate, sortEventTime, sortEventPrice, sortStats, SortType };
