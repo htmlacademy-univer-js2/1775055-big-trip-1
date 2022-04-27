@@ -1,10 +1,32 @@
 import AbstractObservable from '../utils/abstract-observable.js';
+import { generateAllOffers, generateCities, adaptToClient, createDataNewEvent, dataNewEvent } from '../utils/adapter.js';
+import { UpdateType } from '../const.js';
 
 export default class EventsModel extends AbstractObservable {
+  #apiService = null;
   #events = [];
 
-  set events(events) {
-    this.#events = [...events];
+  constructor(apiService) {
+    super();
+    this.#apiService = apiService;
+  }
+
+  init = async () => {
+    try {
+      const offers = await this.#apiService.offers;
+      generateAllOffers(offers);
+      const cities = await this.#apiService.cities;
+      generateCities(cities);
+      const events = await this.#apiService.events;
+      this.#events = events.map((event) => adaptToClient(event));
+      createDataNewEvent();
+      console.log(dataNewEvent);
+    } catch(err) {
+      this.#events = [];
+      console.log('Не отработал');
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   get events() {

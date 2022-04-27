@@ -7,6 +7,7 @@ import { UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 import { generateEvents } from '../mock/event.js';
 import { clearStats } from '../utils/statistic.js';
+import { dataNewEvent } from '../utils/adapter.js';
 import { SortType, sortEventDate, sortEventTime, sortEventPrice } from '../utils/sorting.js';
 
 import { RenderPosition, render, remove } from '../render.js';
@@ -23,6 +24,7 @@ export default class TripPresenter {
   #listEventComponent = new ListEventView();
   #eventEmptyComponent = null;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
 
   constructor(tripContainer, eventsModel, filterModel) {
@@ -65,21 +67,21 @@ export default class TripPresenter {
   }
 
   #handleModelEvent = (updateType, data) => {
-    // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#eventPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderBoard();
-        // - обновить список (например, когда задача ушла в архив)
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({ resetSortType: true });
         this.#renderBoard();
-        // - обновить всю доску (например, при переключении фильтра)
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        this.#renderBoard();
         break;
     }
   }
@@ -92,14 +94,12 @@ export default class TripPresenter {
   }
 
   createEvent = () => {
-    const event = generateEvents();
-    event.city.currentCity.isShowPhoto = true;
-    const createEventData = {...event, isCreateEvent : true};
+    const createEventData = { ...dataNewEvent, isCreateEvent: true };
     this.#handleModeChange();
     this.#currentSortType = SortType.DAY.text;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     clearStats();
-    this.#eventNewPresenter.init(createEventData);
+    this.#eventNewPresenter.init();
   }
 
   #handleModeChange = () => {
@@ -114,7 +114,7 @@ export default class TripPresenter {
   }
 
   destroy = () => {
-    this.#clearBoard({ resetSortType: true});
+    this.#clearBoard({ resetSortType: true });
 
     remove(this.#listEventComponent);
 
@@ -150,7 +150,6 @@ export default class TripPresenter {
     this.#eventEmptyComponent = new EventEmpty(this.#filterType);
     render(this.#tripContainer, this.#eventEmptyComponent, RenderPosition.BEFOREEND);
     this.#listEventComponent.element.remove();
-    this.#sortComponent.element.remove();
   }
 
   #clearBoard = ({ resetSortType = false } = {}) => {
@@ -170,6 +169,10 @@ export default class TripPresenter {
   }
 
   #renderBoard = () => {
+    if (this.#isLoading) {
+      return;
+    }
+
     if (this.events.length === 0) {
       this.#renderNoEvents();
       return;

@@ -4,20 +4,20 @@ import AbstractView from './abstract-view.js';
 const createTripEventOffer = (offer) => {
   const { title, price } = offer;
   return `<li class="event__offer">
-  <span class="event__offer-title">${title.text}</span>
+  <span class="event__offer-title">${title}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${price}</span>
 </li>`;
 };
 
 const createTripEvent = (event) => {
-  const { date, type, city,allPrice, favorite, time } = event;
+  const { date, type, city,basePrice, favorite, time } = event;
 
   const dataDayMonth = dayjs(date.dataBeginEvent).format('D MMM');
   let offersView = '';
 
-  if(type.currentType.selectedOffer) {
-    type.currentType.selectedOffer.forEach((offer) => {
+  if(type.currentType.selectedOffers) {
+    type.currentType.selectedOffers.forEach((offer) => {
       const offerCurrent = createTripEventOffer(offer);
       offersView += offerCurrent;
     });
@@ -37,7 +37,7 @@ const createTripEvent = (event) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="${img}" alt="Event type icon">
     </div>
-    <h3 class="event__title">${title} ${city.currentCity.titleCity}</h3>
+    <h3 class="event__title">${title} ${city.currentCity.name}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="2019-03-18T10:30">${time.startTime}</time>
@@ -47,7 +47,7 @@ const createTripEvent = (event) => {
       <p class="event__duration">${time.duration}</p>
     </div>
     <p class="event__price">
-      &euro;&nbsp;<span class="event__price-value">${allPrice}</span>
+      &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

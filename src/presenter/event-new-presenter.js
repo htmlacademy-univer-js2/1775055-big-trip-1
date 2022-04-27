@@ -14,12 +14,12 @@ export default class EventNewPresenter {
   }
 
   init = (tripEvent) => {
-    this.#tripEvent =tripEvent;
+    this.#tripEvent = tripEvent;
 
     if (this.#eventEditComponent !== null) {
       return;
     }
-    this.#eventEditComponent = new EditPoint(this.#tripEvent);
+    this.#eventEditComponent = new EditPoint();
 
     this.#eventEditComponent.setClickRollupHandler(this.#handleDeleteClick);
     this.#eventEditComponent.setFormSubmitHadler(this.#handleFormSubmit);

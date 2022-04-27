@@ -7,11 +7,8 @@ import MenuView from './view/menu-view.js';
 import { MenuItem } from './const.js';
 import { countingStats, clearStats } from './utils/statistic.js';
 import StatisticsView from './view/statistics-view.js';
+import  ApiService  from './api-service';
 import { RenderPosition, render, remove } from './render.js';
-
-const eventsCount = 30;
-
-const events = Array.from({ length: eventsCount }, generateEvents);
 
 const siteMainElement = document.querySelector('.page-main').querySelector('.page-body__container');
 
@@ -23,10 +20,12 @@ const tripEvents = document.querySelector('.trip-events');
 
 const siteMenuComponent = new MenuView();
 
-const eventsModel = new EventsModel();
-eventsModel.events = events;
+const AUTHORIZATION = 'Basic gjgtrhgrughei313';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
+const eventsModel = new EventsModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
+eventsModel.init();
 
 render(siteMenuContainer, siteMenuComponent, RenderPosition.BEFOREEND);
 const tripPresenter = new TripPresenter(tripEvents, eventsModel, filterModel);

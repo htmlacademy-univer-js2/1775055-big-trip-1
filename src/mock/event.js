@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { getRandomNumber } from '../utils/common.js';
