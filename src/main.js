@@ -1,4 +1,3 @@
-import { generateEvents } from './mock/event.js';
 import TripPresenter from './presenter/trip-presenter.js';
 import EventsModel from './model/events-model.js';
 import FilterModel from './model/filter-model.js';
@@ -16,19 +15,21 @@ const siteMenuContainer = document.querySelector('.trip-controls__navigation');
 
 const siteFilterElement = document.querySelector('.trip-controls__filters');
 
-const tripEvents = document.querySelector('.trip-events');
+const buttonAddNewPoint = document.querySelector('.trip-main__event-add-btn');
+
+const tripEventsContainer = document.querySelector('.trip-events');
 
 const siteMenuComponent = new MenuView();
 
 const AUTHORIZATION = 'Basic gjgtrhgrughei313';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
+buttonAddNewPoint.disabled = true;
+
 const eventsModel = new EventsModel(new ApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
-eventsModel.init();
 
-render(siteMenuContainer, siteMenuComponent, RenderPosition.BEFOREEND);
-const tripPresenter = new TripPresenter(tripEvents, eventsModel, filterModel);
+const tripPresenter = new TripPresenter(tripEventsContainer, eventsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel);
 
 filterPresenter.init();
@@ -40,9 +41,12 @@ let statsView = null;
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.EVENTS:
+      filterPresenter.destroy();
+      tripPresenter.destroy();
       filterPresenter.init();
       tripPresenter.init();
       remove(statsView);
+      statsView = null;
       clearStats();
       break;
     case MenuItem.STATISTICS:
@@ -51,14 +55,20 @@ const handleSiteMenuClick = (menuItem) => {
       render(siteMainElement, statsView, RenderPosition.BEFOREEND);
       filterPresenter.destroy();
       tripPresenter.destroy();
+      tripPresenter.renderInfoTrip();
       break;
   }
 };
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+eventsModel.init().finally(() => {
+  render(siteMenuContainer, siteMenuComponent, RenderPosition.BEFOREEND);
+  buttonAddNewPoint.disabled = false;
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+});
 
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+buttonAddNewPoint.addEventListener('click', (evt) => {
   evt.preventDefault();
+  evt.target.disabled = true;
   const tableLink = document.querySelector('#EVENTS');
   const statsLink = document.querySelector('#STATISTICS');
   tableLink.classList.add('trip-tabs__btn--active');
@@ -66,6 +76,10 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
   filterPresenter.destroy();
   filterPresenter.init();
   tripPresenter.destroy();
-  tripPresenter.init();
+  if(statsView) {
+    remove(statsView);
+  }
+  clearStats();
   tripPresenter.createEvent();
+  tripPresenter.init();
 });

@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { nanoid } from 'nanoid';
 import { getDiffDates } from './date-manipulation.js';
 
 let arrayCities = null;
@@ -21,7 +20,6 @@ const typeRoutes = {
 };
 
 const generateAllOffers = (alloffers) => {
-  console.log(alloffers);
   alloffers.forEach((allOffer) => {
     typeRoutes[allOffer.type].allOffer = allOffer.offers;
     const offer = {
@@ -37,7 +35,6 @@ const generateAllOffers = (alloffers) => {
 
 const generateCities = (cities) => {
   arrayCities = cities.map((city) => ({ ...city, isShowPhoto: false }));
-  console.log(arrayCities);
 };
 
 const generateTime = (dataBeginEvent, dataEndEvent) => {
@@ -64,6 +61,7 @@ const generateTime = (dataBeginEvent, dataEndEvent) => {
 const adaptToClient = (event) => {
   const adaptedTask = {
     id: event.id,
+    isCreateEvent: false,
     favorite: event.is_favorite,
     city: {
       currentCity: {
@@ -96,8 +94,8 @@ const adaptToClient = (event) => {
 
 const createDataNewEvent = () => {
   dataNewEvent = {
-    id: nanoid(),
     favorite: false,
+    isCreateEvent: true,
     city: {
       currentCity: {
         description: arrayCities[0].description,
@@ -118,7 +116,7 @@ const createDataNewEvent = () => {
         allOffer: typeRoutes['taxi'].allOffer,
         img: typeRoutes['taxi'].img,
         selectedOffers: [],
-        title: 'Taxi'
+        title: 'taxi'
       },
       arrayType: arrayTypes
     },

@@ -5,21 +5,25 @@ import EventPresenter from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
 import { UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
-import { generateEvents } from '../mock/event.js';
 import { clearStats } from '../utils/statistic.js';
 import { dataNewEvent } from '../utils/adapter.js';
+import LoadingView from '../view/loading-view.js';
+import EventsInfoView from '../view/trip-info-view.js';
 import { SortType, sortEventDate, sortEventTime, sortEventPrice } from '../utils/sorting.js';
 
 import { RenderPosition, render, remove } from '../render.js';
+const tripMainContainer = document.querySelector('.trip-main');
 
 export default class TripPresenter {
   #tripContainer = null;
   #eventPresenters = new Map();
+  #loadingComponent = new LoadingView();
   #eventNewPresenter = null;
   #currentSortType = SortType.DAY.text;
   #eventsModel = null;
   #filterModel = null;
 
+  #infoTrip = null;
   #sortComponent = null;
   #listEventComponent = new ListEventView();
   #eventEmptyComponent = null;
@@ -81,6 +85,7 @@ export default class TripPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderBoard();
         break;
     }
@@ -94,12 +99,13 @@ export default class TripPresenter {
   }
 
   createEvent = () => {
-    const createEventData = { ...dataNewEvent, isCreateEvent: true };
     this.#handleModeChange();
     this.#currentSortType = SortType.DAY.text;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     clearStats();
-    this.#eventNewPresenter.init();
+    dataNewEvent.type.currentType.selectedOffers = [];
+    dataNewEvent.city.currentCity.isShowPhoto = true;
+    this.#eventNewPresenter.init(dataNewEvent);
   }
 
   #handleModeChange = () => {
@@ -124,6 +130,10 @@ export default class TripPresenter {
 
   #renderListEvent = () => {
     render(this.#tripContainer, this.#listEventComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderLoading = () => {
+    render(this.#tripContainer, this.#loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -152,12 +162,21 @@ export default class TripPresenter {
     this.#listEventComponent.element.remove();
   }
 
+  renderInfoTrip = () => {
+    if(this.events.length > 0 ) {
+      this.#infoTrip = new EventsInfoView(this.events);
+      render(tripMainContainer,this.#infoTrip , RenderPosition.AFTERBEGIN);
+    }
+  }
+
   #clearBoard = ({ resetSortType = false } = {}) => {
     this.#eventNewPresenter.destroy();
     this.#eventPresenters.forEach((presenter) => presenter.destroy());
     this.#eventPresenters.clear();
     remove(this.#sortComponent);
     remove(this.#eventEmptyComponent);
+    remove(this.#loadingComponent);
+    remove(this.#infoTrip);
 
     if (this.#eventEmptyComponent) {
       remove(this.#eventEmptyComponent);
@@ -170,6 +189,7 @@ export default class TripPresenter {
 
   #renderBoard = () => {
     if (this.#isLoading) {
+      this.#renderLoading();
       return;
     }
 
@@ -184,6 +204,7 @@ export default class TripPresenter {
 
     this.#renderListEvent();
 
+    this.renderInfoTrip();
     this.#renderEvents(events);
 
     this.#handleSortTypeChange(this.#currentSortType);

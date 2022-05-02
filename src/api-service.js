@@ -27,11 +27,11 @@ export default class ApiService {
       .then(ApiService.parseResponse);
   }
 
-  updateTask = async (event) => {
+  updateEvent = async (event) => {
     const response = await this.#load({
       url: `points/${event.id}`,
       method: Method.PUT,
-      body: JSON.stringify(event),
+      body: JSON.stringify(this.#adaptToServer(event)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -62,6 +62,24 @@ export default class ApiService {
   }
 
   static parseResponse = (response) => response.json();
+
+  #adaptToServer = (event) => {
+    const adaptedTask = {
+      'base_price': Number(event.basePrice),
+      'date_from': event.date.dataBeginEvent,
+      'date_to': event.date.dataEndEvent,
+      'destination': {
+        'description': event.city.currentCity.description,
+        'name': event.city.currentCity.name,
+        'pictures': event.city.currentCity.pictures,
+      },
+      'id': event.id,
+      'is_favorite': event.favorite,
+      'offers': event.type.currentType.selectedOffers,
+      'type': event.type.currentType.title
+    };
+    return adaptedTask;
+  }
 
   static checkStatus = (response) => {
     if (!response.ok) {

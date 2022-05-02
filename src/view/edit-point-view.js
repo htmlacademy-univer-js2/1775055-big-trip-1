@@ -5,6 +5,8 @@ import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+const buttonAddNewPoint = document.querySelector('.trip-main__event-add-btn');
+
 const createphotoContainer = (pictures) => (
   `<div class="event__photos-container">
   <div class="event__photos-tape">
@@ -19,7 +21,7 @@ const createOfferForEditAndNewPoint = (offer, isCheckedOffer) => {
   const { title, price } = offer;
   const id = title.split(' ').join('-').toLowerCase();
   return `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}" value="${id}" ${isCheckedOffer ? 'checked': ''}>
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}" value="${id}" ${isCheckedOffer ? 'checked' : ''}>
   <label class="event__offer-label" for="event-offer-${id}-1">
     <span class="event__offer-title">${title}</span>
     &plus;&euro;&nbsp;
@@ -28,11 +30,11 @@ const createOfferForEditAndNewPoint = (offer, isCheckedOffer) => {
 </div>`;
 };
 
-const createTripEditPoint = (event = {}) => {
+const createTripEditPoint = (event) => {
   const {
-    date = null,
-    type = null,
-    city = null,
+    date,
+    type,
+    city,
     basePrice,
   } = event;
 
@@ -43,30 +45,23 @@ const createTripEditPoint = (event = {}) => {
   let dataEndEvent = '';
 
   let allCitiesTemplate = '';
-
   type.arrayType.forEach((arrayTypeElement) => {
-    if(event.isCreateEvent) {
-      if (arrayTypeElement.title === 'taxi') {
-        type.currentType = arrayTypeElement;
-      }
-    }
-    else if (arrayTypeElement.title === type.currentType.title) {
-      type.currentType = {...arrayTypeElement, selectedOffers: type.currentType.selectedOffers};
+    if (arrayTypeElement.title === type.currentType.title) {
+      type.currentType = { ...arrayTypeElement, selectedOffers: type.currentType.selectedOffers ? type.currentType.selectedOffers : [] };
     }
   });
 
-  if(!event.isCreateEvent) {
-    type.currentType.allOffer.forEach((offer) => {
-      let isCheckedOffer = false;
-      type.currentType.selectedOffers.forEach((selectedOffer) =>  {
-        if(selectedOffer.id === offer.id) {
-          isCheckedOffer = true;
-        }
-      });
-      const offerCurrent = createOfferForEditAndNewPoint(offer, isCheckedOffer);
-      offersView += offerCurrent;
+  type.currentType.allOffer.forEach((offer) => {
+    let isCheckedOffer = false;
+    type.currentType.selectedOffers.forEach((selectedOffer) => {
+      if (selectedOffer.id === offer.id) {
+        isCheckedOffer = true;
+      }
     });
-  }
+    const offerCurrent = createOfferForEditAndNewPoint(offer, isCheckedOffer);
+    offersView += offerCurrent;
+  });
+
 
   city.arrayCity.forEach((arrayCityElement) => {
     if (arrayCityElement.name === city.currentCity.name) {
@@ -80,7 +75,7 @@ const createTripEditPoint = (event = {}) => {
     }
   });
 
-  if(city.arrayCity) {
+  if (city.arrayCity) {
     city.arrayCity.forEach((cityName) => {
       allCitiesTemplate += `<option value="${cityName.name}"></option>`;
     });
@@ -186,7 +181,7 @@ const createTripEditPoint = (event = {}) => {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${!event.isCreateEvent ? 'Delete' : 'Cancel' }</button>
+      <button class="event__reset-btn" type="reset">${!event.isCreateEvent ? 'Delete' : 'Cancel'}</button>
       ${!event.isCreateEvent ? `<button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>` : ''}
@@ -278,7 +273,7 @@ export default class EditPoint extends SmartView {
     this.updateData({
       date: { dataBeginEvent: userDate, dataEndEvent: this._data.date.dataEndEvent },
     });
-    this._data.time =  generateTime({dataBeginEvent: userDate, dataEndEvent: this._data.date.dataEndEvent});
+    this._data.time = generateTime({ dataBeginEvent: userDate, dataEndEvent: this._data.date.dataEndEvent });
   }
 
   #endDateChangeHandler = ([userDate]) => {
@@ -304,7 +299,9 @@ export default class EditPoint extends SmartView {
 
   setClickRollupHandler = (callback) => {
     this._callback.click = callback;
-    this._data.city.currentCity.isShowPhoto = false;
+    if(!this._data.isCreateEvent) {
+      this._data.city.currentCity.isShowPhoto = false;
+    }
     const rollupButtonTemplate = this.element.querySelector('.event__rollup-btn');
     if (rollupButtonTemplate) {
       rollupButtonTemplate.addEventListener('click', this.#clickHandler);
@@ -313,7 +310,9 @@ export default class EditPoint extends SmartView {
 
   setFormSubmitHadler = (callback) => {
     this._callback.formSubmit = callback;
-    this._data.city.currentCity.isShowPhoto = false;
+    if(!this._data.isCreateEvent) {
+      this._data.city.currentCity.isShowPhoto = false;
+    }
     this.element.querySelector('.event').addEventListener('submit', this.#formSubmitHandler);
   }
 
@@ -324,11 +323,16 @@ export default class EditPoint extends SmartView {
 
   #clickHandler = (evt) => {
     evt.preventDefault();
+    buttonAddNewPoint.disabled = false;
     this._callback.click();
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+    buttonAddNewPoint.disabled = false;
+    const priceValue = this.element.querySelector('#event-price-1').value;
+    this._data.basePrice = Number(priceValue);
+    this._data.isCreateEvent = false;
     const offersTemplate = document.querySelectorAll('.event__offer-checkbox');
     const filteredOffersCheked = Array.from(offersTemplate).filter((checkbox) => checkbox.checked).map((checkbox) => checkbox.value.split('-').join(' '));
     const filteredOffersData = Array.from(this._data.type.currentType.allOffer)
@@ -341,6 +345,7 @@ export default class EditPoint extends SmartView {
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
+    buttonAddNewPoint.disabled = false;
     this._callback.deleteClick(this._data);
   }
 }

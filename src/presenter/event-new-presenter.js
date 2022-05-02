@@ -19,7 +19,7 @@ export default class EventNewPresenter {
     if (this.#eventEditComponent !== null) {
       return;
     }
-    this.#eventEditComponent = new EditPoint();
+    this.#eventEditComponent = new EditPoint(this.#tripEvent);
 
     this.#eventEditComponent.setClickRollupHandler(this.#handleDeleteClick);
     this.#eventEditComponent.setFormSubmitHadler(this.#handleFormSubmit);

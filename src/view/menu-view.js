@@ -1,5 +1,5 @@
 import AbstractView from './abstract-view.js';
-import {MenuItem} from '../const.js';
+import { MenuItem } from '../const.js';
 
 const createTripMenu = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -14,17 +14,19 @@ export default class MenuView extends AbstractView {
   }
 
   setMenuClickHandler = (callback) => {
-    const d = document.querySelector('.trip-controls__trip-tabs');
+    const linkContainer = document.querySelector('.trip-controls__trip-tabs');
     this._callback.menuClick = callback;
-    d.addEventListener('click', this.#menuClickHandler);
+    linkContainer.addEventListener('click', this.#menuClickHandler);
   }
 
   #menuClickHandler = (evt) => {
     const currentLink = document.querySelector(`#${evt.target.dataset.value}`);
     const prevLink = document.querySelector('.trip-tabs__btn--active');
-    currentLink.classList.add('trip-tabs__btn--active');
-    prevLink.classList.remove('trip-tabs__btn--active');
+    if (prevLink !== currentLink) {
+      currentLink.classList.add('trip-tabs__btn--active');
+      prevLink.classList.remove('trip-tabs__btn--active');
 
-    this._callback.menuClick(evt.target.dataset.value);
+      this._callback.menuClick(evt.target.dataset.value);
+    }
   }
 }
