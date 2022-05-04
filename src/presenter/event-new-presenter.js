@@ -51,6 +51,25 @@ export default class EventNewPresenter {
     this.destroy();
   }
 
+  setSaving = () => {
+    this.#eventEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventEditComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (event) => {
     this.#changeData(
       UserAction.ADD_EVENT,
@@ -59,6 +78,5 @@ export default class EventNewPresenter {
       // выдывал честный id задачи, нам нужно позаботиться об этом самим
       {id: nanoid(), ...event},
     );
-    this.destroy();
   }
 }

@@ -88,6 +88,9 @@ const adaptToClient = (event) => {
       arrayType: arrayTypes
     },
     time: generateTime(event.date_from, event.date_to),
+    isDisabled: false,
+    isDeleting: false,
+    isSaving: false,
   };
   return adaptedTask;
 };
@@ -121,6 +124,9 @@ const createDataNewEvent = () => {
       arrayType: arrayTypes
     },
     time: generateTime(dayjs(), dayjs().add(1, 'hour')),
+    isDisabled: false,
+    isDeleting: false,
+    isSaving: false,
   };
 };
 
