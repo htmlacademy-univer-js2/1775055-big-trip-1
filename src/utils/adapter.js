@@ -101,10 +101,10 @@ const createDataNewEvent = () => {
     isCreateEvent: true,
     city: {
       currentCity: {
-        description: arrayCities[0].description,
+        description: 's',
         isShowPhoto: true,
-        pictures: arrayCities[0].pictures,
-        name: arrayCities[0].name
+        pictures: [],
+        name: ''
       },
       arrayCity: arrayCities
     },
