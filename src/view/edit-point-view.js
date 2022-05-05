@@ -36,6 +36,9 @@ const createTripEditPoint = (event) => {
     type,
     city,
     basePrice,
+    isDisabled,
+    isSaving,
+    isDeleting,
   } = event;
 
   let offersView = '';
@@ -91,6 +94,8 @@ const createTripEditPoint = (event) => {
 
   dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');
   dataEndEvent = dayjs(date.dataEndEvent).format('YY/MM/DD HH:mm');
+
+  const buttonDeleteText = (isDeleting ? 'Deleting...' : 'Delete');
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -180,8 +185,8 @@ const createTripEditPoint = (event) => {
         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${!event.isCreateEvent ? basePrice : 0}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${!event.isCreateEvent ? 'Delete' : 'Cancel'}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit"${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+      <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${!event.isCreateEvent ? buttonDeleteText : 'Cancel'}</button>
       ${!event.isCreateEvent ? `<button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>` : ''}
@@ -324,12 +329,18 @@ export default class EditPoint extends SmartView {
   #clickHandler = (evt) => {
     evt.preventDefault();
     buttonAddNewPoint.disabled = false;
+    this._data.isDisabled = false;
+    this._data.isSaving = false;
+    this._data.isDeleting = false;
     this._callback.click();
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     buttonAddNewPoint.disabled = false;
+    this._data.isDisabled = false;
+    this._data.isSaving = false;
+    this._data.isDeleting = false;
     const priceValue = this.element.querySelector('#event-price-1').value;
     this._data.basePrice = Number(priceValue);
     this._data.isCreateEvent = false;

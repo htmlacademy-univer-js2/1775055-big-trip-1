@@ -1,7 +1,7 @@
 import ListEventView from '../view/list-event-view.js';
 import SortView from '../view/sort-view.js';
 import EventEmpty from '../view/event-empty.js';
-import EventPresenter from './event-presenter.js';
+import EventPresenter, {State as EventPresenterViewState} from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
 import { UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
@@ -56,16 +56,33 @@ export default class TripPresenter {
     return filteredEvents;
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
+        this.#eventPresenters.get(update.id).setViewState(EventPresenterViewState.SAVING);
         this.#eventsModel.updateEvent(updateType, update);
+        try {
+          await this.#eventsModel.updateEvent(updateType, update);
+        } catch(err) {
+          this.#eventPresenters.get(update.id).setViewState(EventPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_EVENT:
-        this.#eventsModel.addEvent(updateType, update);
+        this.#eventNewPresenter.setSaving();
+        try {
+          await this.#eventsModel.addEvent(updateType, update);
+        } catch(err) {
+          this.#eventNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_EVENT:
+        this.#eventPresenters.get(update.id).setViewState(EventPresenterViewState.DELETING);
         this.#eventsModel.deleteEvents(updateType, update);
+        try {
+          await this.#eventsModel.deleteEvents(updateType, update);
+        } catch(err) {
+          this.#eventPresenters.get(update.id).setViewState(EventPresenterViewState.ABORTING);
+        }
         break;
     }
   }

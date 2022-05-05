@@ -1,39 +1,45 @@
 import FilterView from '../view/filter-view.js';
-import {render, RenderPosition, replace, remove} from '../render.js';
-import {FilterType, UpdateType} from '../const.js';
+import { render, RenderPosition, replace, remove } from '../render.js';
+import { FilterType, UpdateType } from '../const.js';
+import { filter } from '../utils/filter.js';
 
 export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
+  #eventsModel = null;
 
   #filterComponent = null;
 
-  constructor(filterContainer, filterModel) {
+  constructor(filterContainer, filterModel, eventsModel) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
+    this.#eventsModel = eventsModel;
   }
 
   get filters() {
-    return [
-      {
-        type: FilterType.EVERYTHING,
+    const events = this.#eventsModel.events;
+
+    return {
+      [FilterType.EVERYTHING]: {
         name: 'Everything',
+        count: filter[FilterType.EVERYTHING](events).length,
       },
-      {
-        type: FilterType.FUTURE,
+      ['future']: {
         name: 'Future',
+        count: filter[FilterType.FUTURE](events).length,
       },
-      {
-        type: FilterType.PAST,
+      [FilterType.PAST]: {
         name: 'Past',
+        count: filter[FilterType.PAST](events).length,
       },
-    ];
+    };
   }
 
   init = () => {
+    const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new FilterView( this.#filterModel.filter);
+    this.#filterComponent = new FilterView(this.#filterModel.filter, filters);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     this.#filterModel.addObserver(this.#handleModelEvent);
