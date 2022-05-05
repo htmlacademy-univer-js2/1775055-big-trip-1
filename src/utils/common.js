@@ -18,4 +18,4 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {getRandomNumber, updateItem}
+export {getRandomNumber, updateItem};
