@@ -5,24 +5,30 @@ import EventPresenter from './event-presenter.js';
 import EventNewPresenter from './event-new-presenter.js';
 import { UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
-import { generateEvents } from '../mock/event.js';
 import { clearStats } from '../utils/statistic.js';
+import { dataNewEvent } from '../utils/adapter.js';
+import LoadingView from '../view/loading-view.js';
+import EventsInfoView from '../view/trip-info-view.js';
 import { SortType, sortEventDate, sortEventTime, sortEventPrice } from '../utils/sorting.js';
 
 import { RenderPosition, render, remove } from '../render.js';
+const tripMainContainer = document.querySelector('.trip-main');
 
 export default class TripPresenter {
   #tripContainer = null;
   #eventPresenters = new Map();
+  #loadingComponent = new LoadingView();
   #eventNewPresenter = null;
   #currentSortType = SortType.DAY.text;
   #eventsModel = null;
   #filterModel = null;
 
+  #infoTrip = null;
   #sortComponent = null;
   #listEventComponent = new ListEventView();
   #eventEmptyComponent = null;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
 
   constructor(tripContainer, eventsModel, filterModel) {
@@ -65,21 +71,22 @@ export default class TripPresenter {
   }
 
   #handleModelEvent = (updateType, data) => {
-    // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#eventPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderBoard();
-        // - обновить список (например, когда задача ушла в архив)
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({ resetSortType: true });
         this.#renderBoard();
-        // - обновить всю доску (например, при переключении фильтра)
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
         break;
     }
   }
@@ -92,14 +99,13 @@ export default class TripPresenter {
   }
 
   createEvent = () => {
-    const event = generateEvents();
-    event.city.currentCity.isShowPhoto = true;
-    const createEventData = {...event, isCreateEvent : true};
     this.#handleModeChange();
     this.#currentSortType = SortType.DAY.text;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     clearStats();
-    this.#eventNewPresenter.init(createEventData);
+    dataNewEvent.type.currentType.selectedOffers = [];
+    dataNewEvent.city.currentCity.isShowPhoto = true;
+    this.#eventNewPresenter.init(dataNewEvent);
   }
 
   #handleModeChange = () => {
@@ -114,7 +120,7 @@ export default class TripPresenter {
   }
 
   destroy = () => {
-    this.#clearBoard({ resetSortType: true});
+    this.#clearBoard({ resetSortType: true });
 
     remove(this.#listEventComponent);
 
@@ -124,6 +130,10 @@ export default class TripPresenter {
 
   #renderListEvent = () => {
     render(this.#tripContainer, this.#listEventComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderLoading = () => {
+    render(this.#tripContainer, this.#loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -150,7 +160,13 @@ export default class TripPresenter {
     this.#eventEmptyComponent = new EventEmpty(this.#filterType);
     render(this.#tripContainer, this.#eventEmptyComponent, RenderPosition.BEFOREEND);
     this.#listEventComponent.element.remove();
-    this.#sortComponent.element.remove();
+  }
+
+  renderInfoTrip = () => {
+    if(this.events.length > 0 ) {
+      this.#infoTrip = new EventsInfoView(this.events);
+      render(tripMainContainer,this.#infoTrip , RenderPosition.AFTERBEGIN);
+    }
   }
 
   #clearBoard = ({ resetSortType = false } = {}) => {
@@ -159,6 +175,8 @@ export default class TripPresenter {
     this.#eventPresenters.clear();
     remove(this.#sortComponent);
     remove(this.#eventEmptyComponent);
+    remove(this.#loadingComponent);
+    remove(this.#infoTrip);
 
     if (this.#eventEmptyComponent) {
       remove(this.#eventEmptyComponent);
@@ -170,6 +188,11 @@ export default class TripPresenter {
   }
 
   #renderBoard = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.events.length === 0) {
       this.#renderNoEvents();
       return;
@@ -181,6 +204,7 @@ export default class TripPresenter {
 
     this.#renderListEvent();
 
+    this.renderInfoTrip();
     this.#renderEvents(events);
 
     this.#handleSortTypeChange(this.#currentSortType);

@@ -14,7 +14,7 @@ export default class EventNewPresenter {
   }
 
   init = (tripEvent) => {
-    this.#tripEvent =tripEvent;
+    this.#tripEvent = tripEvent;
 
     if (this.#eventEditComponent !== null) {
       return;
