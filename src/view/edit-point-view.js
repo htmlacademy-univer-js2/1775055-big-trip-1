@@ -7,7 +7,7 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const buttonAddNewPoint = document.querySelector('.trip-main__event-add-btn');
 
-const createphotoContainer = (pictures) => (
+const createPhotoContainer = (pictures) => (
   `<div class="event__photos-container">
   <div class="event__photos-tape">
   ${pictures}
@@ -65,9 +65,10 @@ const createTripEditPoint = (event) => {
     offersView += offerCurrent;
   });
 
-
+  let flagCoincidences = false;
   city.arrayCity.forEach((arrayCityElement) => {
     if (arrayCityElement.name === city.currentCity.name) {
+      flagCoincidences = true;
       if (city.currentCity.isShowPhoto) {
         city.currentCity = arrayCityElement;
         city.currentCity.isShowPhoto = true;
@@ -77,6 +78,15 @@ const createTripEditPoint = (event) => {
       }
     }
   });
+
+  if(!flagCoincidences) {
+    city.currentCity = {
+      ...city.currentCity,
+      description: '',
+      isShowPhoto: false,
+      pictures: []
+    };
+  }
 
   if (city.arrayCity) {
     city.arrayCity.forEach((cityName) => {
@@ -89,7 +99,7 @@ const createTripEditPoint = (event) => {
       const onePhotoTemplate = createTripPictures(picture);
       photoTemplate += onePhotoTemplate;
     });
-    photoTemplate = createphotoContainer(photoTemplate);
+    photoTemplate = createPhotoContainer(photoTemplate);
   }
 
   dataBeginEvent = dayjs(date.dataBeginEvent).format('YY/MM/DD HH:mm');
