@@ -131,4 +131,4 @@ const createDataNewEvent = () => {
 };
 
 
-export { adaptToClient, generateAllOffers, generateCities, createDataNewEvent , dataNewEvent };
+export { adaptToClient, generateAllOffers, generateCities, createDataNewEvent , dataNewEvent, generateTime };

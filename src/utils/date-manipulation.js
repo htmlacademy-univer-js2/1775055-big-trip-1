@@ -7,7 +7,7 @@ const getDiffDates = (dayOne, dayTwo) => {
 
   const hours = Math.floor(diffDateUnix / (60 * 60 * 1000) - (24 * days));
 
-  const minuts = diffDateUnix / (60 * 1000) - (days * 24 * 60) - (hours * 60);
+  const minuts = Math.floor(diffDateUnix / (60 * 1000) - (days * 24 * 60) - (hours * 60));
   return { 'days': days, 'hours': hours, 'minuts': minuts, 'unix': diffDateUnix };
 };
 

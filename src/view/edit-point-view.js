@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import SmartView from './smart-view.js';
-import { generateTime } from '../mock/event.js';
+import { generateTime } from '../utils/adapter.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -79,7 +79,7 @@ const createTripEditPoint = (event) => {
     }
   });
 
-  if(!flagCoincidences) {
+  if (!flagCoincidences) {
     city.currentCity = {
       ...city.currentCity,
       description: '',
@@ -209,12 +209,12 @@ const createTripEditPoint = (event) => {
           ${offersView}
         </div>
       </section>
-
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${city.currentCity.description}</p>
-        ${photoTemplate}
-      </section>
+      ${city.currentCity.description === '' && photoTemplate.length === 0 ? '' :
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${city.currentCity.description}</p>
+      ${photoTemplate}
+    </section>`}
     </section>
   </form>
 </li>`;
@@ -314,7 +314,7 @@ export default class EditPoint extends SmartView {
 
   setClickRollupHandler = (callback) => {
     this._callback.click = callback;
-    if(!this._data.isCreateEvent) {
+    if (!this._data.isCreateEvent) {
       this._data.city.currentCity.isShowPhoto = false;
     }
     const rollupButtonTemplate = this.element.querySelector('.event__rollup-btn');
@@ -325,7 +325,7 @@ export default class EditPoint extends SmartView {
 
   setFormSubmitHadler = (callback) => {
     this._callback.formSubmit = callback;
-    if(!this._data.isCreateEvent) {
+    if (!this._data.isCreateEvent) {
       this._data.city.currentCity.isShowPhoto = false;
     }
     this.element.querySelector('.event').addEventListener('submit', this.#formSubmitHandler);

@@ -36,7 +36,8 @@ export default class EventNewPresenter {
 
     remove(this.#eventEditComponent);
     this.#eventEditComponent = null;
-
+    const buttonAddNewPoint = document.querySelector('.trip-main__event-add-btn');
+    buttonAddNewPoint.disabled = false;
     document.removeEventListener('keydown', this.#onEscKeyDown);
   }
 
