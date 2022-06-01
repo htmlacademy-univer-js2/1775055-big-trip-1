@@ -66,7 +66,7 @@ const adaptToClient = (event) => {
     city: {
       currentCity: {
         description: event.destination.description,
-        isShowPhoto: false,
+        isShowPhoto: true,
         pictures: event.destination.pictures,
         name: event.destination.name
       },

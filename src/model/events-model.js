@@ -18,6 +18,7 @@ export default class EventsModel extends AbstractObservable {
       const cities = await this.#apiService.cities;
       generateCities(cities);
       const events = await this.#apiService.events;
+      console.log(events);
       this.#events = events.map((event) => adaptToClient(event));
       createDataNewEvent();
     } catch (err) {
@@ -34,7 +35,7 @@ export default class EventsModel extends AbstractObservable {
   }
 
   updateEvent = async (updateType, update) => {
-    const index = this.#events.findIndex((event) => event.id === update.id);
+    let index = this.#events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting event');
@@ -42,7 +43,7 @@ export default class EventsModel extends AbstractObservable {
     try {
       const response = await this.#apiService.updateEvent(update);
       const updatedEvent = adaptToClient(response);
-
+      index = this.#events.findIndex((event) => event.id === update.id);
       this.#events = [
         ...this.#events.slice(0, index),
         update,
