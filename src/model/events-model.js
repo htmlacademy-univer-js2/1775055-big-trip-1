@@ -18,7 +18,6 @@ export default class EventsModel extends AbstractObservable {
       const cities = await this.#apiService.cities;
       generateCities(cities);
       const events = await this.#apiService.events;
-      console.log(events);
       this.#events = events.map((event) => adaptToClient(event));
       createDataNewEvent();
     } catch (err) {
