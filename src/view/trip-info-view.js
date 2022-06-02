@@ -7,8 +7,8 @@ const createTripInfoEvents = (events) => {
   const arrayNameCities = events.map((event)=> event.city.currentCity.name);
   let totalBasePrice = null;
   events.forEach((event)=> {totalBasePrice += Number(event.basePrice);});
-  const dateBegin = dayjs(events[0].date.dataBeginEvent).format('MMM D');
-  const dateEnd = dayjs(events[events.length-1].date.dataEndEvent).format('DD');
+  const dateBegin = dayjs(events[0].date.dataBeginEvent).format('D MMM');
+  const dateEnd = dayjs(events[events.length-1].date.dataEndEvent).format('DD MMM');
 
   let tripTitles = '';
 

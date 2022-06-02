@@ -15,7 +15,7 @@ const createPhotoContainer = (pictures) => (
 </div>`
 );
 
-const createTripPictures = (picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`;
+const createTripPictures = (picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
 
 const createOfferForEditAndNewPoint = (offer, isCheckedOffer) => {
   const { title, price } = offer;
@@ -113,7 +113,7 @@ const createTripEditPoint = (event) => {
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" for="event-type-toggle-1">
           <span class="visually-hidden">Choose event type</span>
-          <img class="event__type-icon" width="17" height="17" src="${type.currentType.img}" alt="Event type icon">
+          <img class="event__type-icon" width="17" height="17" src="${type.currentType.img}" alt="${type.currentType.title}">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -288,14 +288,14 @@ export default class EditPoint extends SmartView {
     this.updateData({
       date: { dataBeginEvent: userDate, dataEndEvent: this._data.date.dataEndEvent },
     });
-    this._data.time = generateTime({ dataBeginEvent: userDate, dataEndEvent: this._data.date.dataEndEvent });
+    this._data.time = generateTime( userDate, this._data.date.dataEndEvent );
   }
 
   #endDateChangeHandler = ([userDate]) => {
     this.updateData({
       date: { dataBeginEvent: this._data.date.dataBeginEvent, dataEndEvent: userDate },
     });
-    this._data.time = generateTime({ dataBeginEvent: this._data.date.dataBeginEvent, dataEndEvent: userDate });
+    this._data.time = generateTime(this._data.date.dataBeginEvent, userDate );
   }
 
 
@@ -314,9 +314,6 @@ export default class EditPoint extends SmartView {
 
   setClickRollupHandler = (callback) => {
     this._callback.click = callback;
-    if (!this._data.isCreateEvent) {
-      this._data.city.currentCity.isShowPhoto = false;
-    }
     const rollupButtonTemplate = this.element.querySelector('.event__rollup-btn');
     if (rollupButtonTemplate) {
       rollupButtonTemplate.addEventListener('click', this.#clickHandler);
@@ -325,9 +322,6 @@ export default class EditPoint extends SmartView {
 
   setFormSubmitHadler = (callback) => {
     this._callback.formSubmit = callback;
-    if (!this._data.isCreateEvent) {
-      this._data.city.currentCity.isShowPhoto = false;
-    }
     this.element.querySelector('.event').addEventListener('submit', this.#formSubmitHandler);
   }
 
